@@ -1,0 +1,44 @@
+{
+  "name": "dialog-lightbox",
+  "version": "0.0.0",
+  "description": "A lightweight lightbox on the native <dialog>: swipe, zoom, video. It adds behavior; the markup and CSS stay yours.",
+  "keywords": [
+    "lightbox",
+    "dialog",
+    "gallery",
+    "photo",
+    "swipe",
+    "zoom",
+    "video"
+  ],
+  "license": "MIT",
+  "author": "Maximilian Fettinger",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fettinger-m/dialog-lightbox.git"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/dialog-lightbox.js"
+    },
+    "./dialog-lightbox.css": "./dist/dialog-lightbox.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "check": "biome check . && tsc",
+    "test": "bun test ./test/unit"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@playwright/test": "1.64.1",
+    "@types/bun": "1.4.3",
+    "typescript": "7.0.2"
+  }
+}
