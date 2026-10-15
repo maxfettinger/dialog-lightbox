@@ -32,9 +32,12 @@
     "*.css"
   ],
   "scripts": {
+    "build": "rm -rf dist && bun build ./src/index.ts --minify --target=browser --outfile=dist/dialog-lightbox.js && cp src/dialog-lightbox.css dist/ && tsc -p tsconfig.build.json",
+    "prepack": "bun run build",
     "check": "biome check . && tsc",
     "test": "bun test ./test/unit",
     "test:browser": "bun --bun playwright test",
+    "size": "bun run build && bun scripts/size.ts",
     "dev": "bun scripts/serve.ts"
   },
   "devDependencies": {
