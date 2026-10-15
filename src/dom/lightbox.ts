@@ -1,13 +1,14 @@
 // lightbox(): wires a gallery of links to a <dialog>. Each opening is a session (session.ts) that the other
 // dom/ modules work on; closing drops it and removes its listeners with one abort() call.
-import { FIT_VIEW } from "../core/geometry";
+import { FIT_VIEW, fit } from "../core/geometry";
 import { step } from "../core/navigation";
 import { clear, findControls, render } from "./controls";
-import { readSlides, type SlideData } from "./links";
+import { createHistory, hashId } from "./history";
+import { readSlide, readSlides, type SlideData } from "./links";
 import { change } from "./navigate";
 import { bindPointer } from "./pointer";
-import { createSession, current, fitOf, measure, place, type Session, setSlots } from "./session";
-import { loadLarge, type SlideEl } from "./slides";
+import { areaOf, createSession, current, fitOf, measure, place, type Session, setSlots } from "./session";
+import { loadLarge, preload, type SlideEl } from "./slides";
 import { closeAnimation, openAnimation } from "./transitions";
 import { createVideo } from "./video";
 import { toggleZoom, zoomOf } from "./zoom";
@@ -16,6 +17,7 @@ export interface LightboxOptions {
   gallery: HTMLElement;
   dialog: HTMLDialogElement;
   loop?: boolean;
+  history?: boolean;
 }
 
 export interface Slide {
@@ -60,6 +62,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
   };
   let s: Session | null = null;
   const video = createVideo(() => sync(), life.signal);
+  const hist = options.history === false ? null : createHistory(() => void close(true), life.signal);
 
   const links = (): HTMLAnchorElement[] => [...gallery.querySelectorAll<HTMLAnchorElement>("a[href]")];
   const toSlide = ({ index, id, type, link }: SlideData): Slide => ({ index, id, type, link });
@@ -111,6 +114,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     const slide = current(s);
     video.deactivate();
     if (slide.data.type === "video") video.activate(slide.media, slide.data.src, controls.progress);
+    hist?.change(slide.data.id);
     emit("change", slide.data);
     sync();
     void loadAround(s);
@@ -137,7 +141,8 @@ export function lightbox(options: LightboxOptions): Lightbox {
     }
   }
 
-  function open(index: number): void {
+  /** `deep`: opened from a #dlb=<id> URL, so there is no history entry to add. */
+  function open(index: number, deep = false): void {
     if (s) return;
     const slides = readSlides(gallery, galleryId);
     if (!slides[index]) return;
@@ -150,6 +155,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     const slide = current(session);
     // Still inside the user's click, so iOS lets the video start.
     if (slide.data.type === "video") video.activate(slide.media, slide.data.src, controls.progress);
+    hist?.open(slide.data.id, deep);
     emit("open", slide.data);
     emit("change", slide.data);
     sync();
@@ -206,11 +212,12 @@ export function lightbox(options: LightboxOptions): Lightbox {
     });
   }
 
-  /** Closes with the zoom back to the thumbnail. */
-  async function close(): Promise<void> {
+  /** Closes with the zoom back to the thumbnail. `fromBack`: the back button already removed the entry. */
+  async function close(fromBack = false): Promise<void> {
     const session = s;
     if (!session || session.closing) return;
     session.closing = true;
+    if (!fromBack) hist?.close();
     video.pause();
     await closeAnimation(session, dialog);
     finish();
@@ -220,6 +227,8 @@ export function lightbox(options: LightboxOptions): Lightbox {
   function finish(): void {
     const session = s;
     if (!session) return;
+    // The browser closed the dialog itself (an Escape we couldn't cancel): the history entry is still there.
+    if (!session.closing) hist?.close();
     s = null;
     video.deactivate();
     session.abort.abort();
@@ -244,6 +253,29 @@ export function lightbox(options: LightboxOptions): Lightbox {
     },
     { signal: life.signal },
   );
+
+  gallery.addEventListener(
+    "pointerover",
+    (event) => {
+      const link =
+        event.target instanceof Element ? event.target.closest<HTMLAnchorElement>("a[href]") : null;
+      const index = link ? links().indexOf(link) : -1;
+      if (event.pointerType !== "mouse" || !link || index < 0) return;
+      const data = readSlide(link, index, galleryId);
+      const area = areaOf(viewport, { width: innerWidth, height: innerHeight });
+      preload(data, data.aspect ? fit(data.aspect, area).width : area.width);
+    },
+    { signal: life.signal },
+  );
+
+  // A #dlb=<id> URL opens that slide. On the next frame, so the page can register its handlers first.
+  const deepId = hist ? hashId() : null;
+  if (deepId) {
+    requestAnimationFrame(() => {
+      const index = readSlides(gallery, galleryId).findIndex((data) => data.id === deepId);
+      if (index >= 0) open(index, true);
+    });
+  }
 
   return {
     open: (index = 0) => open(index),

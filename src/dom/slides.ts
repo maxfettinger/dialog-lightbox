@@ -79,3 +79,12 @@ async function decode(slide: SlideEl, sizes: number): Promise<void> {
     slide.status = "error";
   }
 }
+
+const preloaded = new WeakSet<HTMLAnchorElement>();
+
+/** Starts loading a link's large image before it opens (on mouse hover). */
+export function preload(data: SlideData, sizes: number): void {
+  if (data.type === "video" || preloaded.has(data.link)) return;
+  preloaded.add(data.link);
+  image(data.src, "", data.srcset, sizes);
+}

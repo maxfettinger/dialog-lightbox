@@ -12,7 +12,12 @@ const log: string[] = [];
 const boxes: Lightbox[] = [];
 for (const id of ["one", "two", "three"]) {
   const gallery = document.getElementById(id)!;
-  const box = lightbox({ gallery, dialog, loop: gallery.dataset.loop === "true" });
+  const box = lightbox({
+    gallery,
+    dialog,
+    loop: gallery.dataset.loop === "true",
+    history: gallery.dataset.history !== "false",
+  });
   for (const type of ["open", "change", "close"] as const)
     box.on(type, (slide) => log.push(`${type}:${slide.id}`));
   boxes.push(box);
