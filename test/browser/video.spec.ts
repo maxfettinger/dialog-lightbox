@@ -87,3 +87,18 @@ test("closing releases the video", async ({ fixture: page }) => {
   await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
   await expect(page.locator("video")).toHaveCount(0);
 });
+
+test("a video without width, height or thumbnail appears once its metadata is known", async ({
+  fixture: page,
+}) => {
+  await openAt(page, "four", 0);
+  const media = page.locator("[data-dlb-current] > div");
+  await expect(media).not.toHaveCSS("visibility", "hidden");
+  const box = await media.boundingBox();
+  expect(box?.width).toBeGreaterThan(50);
+  // A tap on the video is a tap on the video, not outside it.
+  const viewport = page.locator("[data-dlb-viewport]");
+  const view = await viewport.boundingBox();
+  await page.mouse.click(view!.x + view!.width / 2, view!.y + view!.height / 2);
+  await expect(page.locator("dialog")).toHaveAttribute("open", "");
+});

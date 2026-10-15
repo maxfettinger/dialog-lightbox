@@ -8,10 +8,10 @@ import {
   viewRect,
   zoomAt,
   zoomTarget,
-} from "../core/geometry";
-import { DURATION, EASE, placeAt, play } from "./animate";
-import { current, fitOf, place, type Session, wrapperSize } from "./session";
-import type { SlideEl } from "./slides";
+} from "../core/geometry.js";
+import { DURATION, EASE, placeAt, play } from "./animate.js";
+import { current, fitOf, place, type Session, wrapperSize } from "./session.js";
+import type { SlideEl } from "./slides.js";
 
 /** How far a slide zooms, or null when it can't: videos, small photos, unknown sizes, errors. */
 export function zoomOf(s: Session, slide: SlideEl): number | null {

@@ -73,3 +73,11 @@ test("a gallery with one slide can't move", async ({ fixture: page }) => {
   await page.keyboard.press("ArrowRight");
   await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 1");
 });
+
+test("arrow keys with a modifier are left to the browser", async ({ fixture: page }) => {
+  await openAt(page, "one", 0);
+  for (const key of ["Alt+ArrowRight", "Meta+ArrowRight", "Control+ArrowRight"])
+    await page.keyboard.press(key);
+  await page.waitForTimeout(400);
+  await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 7");
+});

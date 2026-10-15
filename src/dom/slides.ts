@@ -1,6 +1,6 @@
 // Slide elements. Each holds a wrapper for its media: the thumbnail's image as a placeholder and, once
 // decoded, the large image on top. session.ts sizes and places the wrapper.
-import type { SlideData } from "./links";
+import type { SlideData } from "./links.js";
 
 export interface SlideEl {
   data: SlideData;

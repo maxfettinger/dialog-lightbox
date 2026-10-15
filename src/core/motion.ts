@@ -1,6 +1,6 @@
 // Motion: release momentum, resistance past an edge, springs sampled into keyframes, and the decisions a
 // release makes (change the slide, close the box).
-import { clamp, type Size, type View } from "./geometry";
+import { clamp, type Size, type View } from "./geometry.js";
 
 const DECELERATION = 0.995;
 const STEPS = 30;
@@ -54,7 +54,8 @@ function curve(d: number, v: number, w: number): { offset: (t: number) => number
 
 /** A swipe's result: 1 for the next slide, -1 for the previous one, 0 to stay. Negative dx and vx point left. */
 export function swipeDirection(dx: number, vx: number, width: number): -1 | 0 | 1 {
-  if (Math.abs(vx) > 0.5) return vx < 0 ? 1 : -1;
+  // A fast flick decides, unless it goes against the drag: that cancels the drag.
+  if (Math.abs(vx) > 0.5) return dx * vx > 0 || dx === 0 ? (vx < 0 ? 1 : -1) : 0;
   if (Math.abs(dx) > width / 2) return dx < 0 ? 1 : -1;
   return 0;
 }

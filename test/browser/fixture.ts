@@ -10,7 +10,7 @@ if (!document.createElement("video").canPlayType('video/mp4; codecs="avc1.42E01E
 const dialog = document.querySelector("dialog")!;
 const log: string[] = [];
 const boxes: Lightbox[] = [];
-for (const id of ["one", "two", "three"]) {
+for (const id of ["one", "two", "three", "four"]) {
   const gallery = document.getElementById(id)!;
   const box = lightbox({
     gallery,

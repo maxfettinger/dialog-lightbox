@@ -4,4 +4,4 @@ export {
   type LightboxOptions,
   lightbox,
   type Slide,
-} from "./dom/lightbox";
+} from "./dom/lightbox.js";

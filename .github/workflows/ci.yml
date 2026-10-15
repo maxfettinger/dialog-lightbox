@@ -17,5 +17,6 @@ jobs:
       - run: bun run check
       - run: bun run test
       - run: bun run size
-      - run: bunx --bun playwright install --with-deps chromium webkit
+      - run: bun run check:types
+      - run: bunx --bun playwright install --with-deps chromium webkit firefox
       - run: bun run test:browser

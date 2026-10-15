@@ -1,11 +1,11 @@
 // One open lightbox: its slides, the three slide elements in the strip, and where everything is.
 // place() writes every position from this state; the other dom/ modules change the state and call it.
-import { FIT_VIEW, fit, type Rect, type Size, type View, viewRect } from "../core/geometry";
-import { type GestureState, initialGesture } from "../core/gesture";
-import { neighbours } from "../core/navigation";
-import { placeAt } from "./animate";
-import type { SlideData } from "./links";
-import { createSlide, type SlideEl } from "./slides";
+import { FIT_VIEW, fit, type Rect, type Size, type View, viewRect } from "../core/geometry.js";
+import { type GestureState, initialGesture } from "../core/gesture.js";
+import { neighbours } from "../core/navigation.js";
+import { placeAt } from "./animate.js";
+import type { SlideData } from "./links.js";
+import { createSlide, type SlideEl } from "./slides.js";
 
 /** Space between slides, as a share of the viewport width. */
 export const GAP = 0.1;

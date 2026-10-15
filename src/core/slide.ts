@@ -1,5 +1,5 @@
 // Reading a slide's size and id from its link's attributes, without the DOM.
-import type { Size } from "./geometry";
+import type { Size } from "./geometry.js";
 
 /** The largest width descriptor in a srcset: "a.webp 1080w, b.webp 1600w" gives 1600. */
 export function largestWidth(srcset: string | undefined): number | undefined {

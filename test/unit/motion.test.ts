@@ -68,6 +68,16 @@ describe("swipeDirection", () => {
     expect(swipeDirection(210, 0.1, 400)).toBe(-1);
   });
 
+  test("a flick back against the drag cancels it", () => {
+    expect(swipeDirection(-260, 2, 400)).toBe(0);
+    expect(swipeDirection(260, -2, 400)).toBe(0);
+    expect(swipeDirection(-60, 0.8, 400)).toBe(0);
+  });
+
+  test("a flick without a drag decides by its direction", () => {
+    expect(swipeDirection(0, -0.8, 400)).toBe(1);
+  });
+
   test("a short slow drag stays", () => {
     expect(swipeDirection(-150, -0.2, 400)).toBe(0);
   });

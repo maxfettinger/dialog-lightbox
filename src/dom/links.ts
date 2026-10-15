@@ -1,6 +1,6 @@
 // Slide data from a gallery's links: what to load, how big it is, its id.
-import type { Size } from "../core/geometry";
-import { resolveSize, slideId } from "../core/slide";
+import type { Size } from "../core/geometry.js";
+import { resolveSize, slideId } from "../core/slide.js";
 
 export interface SlideData {
   index: number;

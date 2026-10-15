@@ -36,3 +36,22 @@ test("hovering a thumbnail with the mouse starts loading its large image", async
   await page.locator("#one a").nth(1).hover();
   await request;
 });
+
+test("a malformed #dlb= hash is ignored instead of breaking the page", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/test/browser/#dlb=%E0%A4%A");
+  await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
+  expect(await page.evaluate(() => window.boxes.length)).toBe(4);
+  expect(errors).toEqual([]);
+});
+
+test("closing leaves the URL alone when the page navigated away from the hash", async ({ fixture: page }) => {
+  await openAt(page, "one", 0);
+  await page.evaluate(() => {
+    history.pushState(null, "", "?route=project");
+    window.boxes[0]!.destroy();
+  });
+  await page.waitForTimeout(300);
+  await expect(page).toHaveURL(/\?route=project$/);
+});

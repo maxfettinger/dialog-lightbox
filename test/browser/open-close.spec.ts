@@ -120,3 +120,32 @@ test("destroy() closes an open box and stops opening on clicks", async ({ fixtur
   });
   expect(opened).toBe(false);
 });
+
+test("a second lightbox on the same dialog cannot open while one is open", async ({ fixture: page }) => {
+  await page.evaluate(() => {
+    window.boxes[0]!.open(0);
+    window.boxes[1]!.open(0);
+  });
+  await expect(page.locator("[data-dlb-slide]")).toHaveCount(2);
+  expect(await page.evaluate(() => window.boxes[1]!.current)).toBeNull();
+  expect(await page.evaluate(() => window.boxes[0]!.current?.id)).toBe("wide");
+});
+
+test("a destroyed lightbox does not open", async ({ fixture: page }) => {
+  await page.evaluate(() => {
+    window.boxes[0]!.destroy();
+    window.boxes[0]!.open(0);
+  });
+  await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
+});
+
+test("destroying before the deep link opens leaves the dialog closed", async ({ fixture: page }) => {
+  await page.evaluate(async () => {
+    history.replaceState(null, "", "#dlb=one-2");
+    window
+      .lightbox({ gallery: document.getElementById("one")!, dialog: document.querySelector("dialog")! })
+      .destroy();
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  });
+  await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
+});

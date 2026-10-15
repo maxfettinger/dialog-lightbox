@@ -1,8 +1,8 @@
 // The opening and closing zoom between a thumbnail and the box, or a fade when no thumbnail is on screen.
-import { type Insets, NO_INSETS, type Rect, thumbStart, viewRect } from "../core/geometry";
-import { clipAt, DURATION, EASE, placeAt, play } from "./animate";
-import { current, fitOf, place, type Session, wrapperSize } from "./session";
-import type { SlideEl } from "./slides";
+import { type Insets, NO_INSETS, type Rect, thumbStart, viewRect } from "../core/geometry.js";
+import { clipAt, DURATION, EASE, placeAt, play } from "./animate.js";
+import { current, fitOf, place, type Session, wrapperSize } from "./session.js";
+import type { SlideEl } from "./slides.js";
 
 export async function openAnimation(s: Session, dialog: HTMLElement): Promise<void> {
   const slide = current(s);

@@ -132,7 +132,7 @@ git switch -c first-version
   "author": "Maximilian Fettinger",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fettinger-m/dialog-lightbox.git"
+    "url": "git+https://github.com/maxfettinger/dialog-lightbox.git"
   },
   "type": "module",
   "exports": {
@@ -5256,10 +5256,10 @@ git commit -m "Add a demo with two film strips" -m "Free stock photos and clips 
 
 - [ ] **Step 1: Create the repository (ask Max first)**
 
-Ask Max whether to create the public repository `fettinger-m/dialog-lightbox` and push. Only after a yes:
+Ask Max whether to create the public repository `maxfettinger/dialog-lightbox` and push. Only after a yes:
 
 ```bash
-gh repo create fettinger-m/dialog-lightbox --public --description "A lightweight lightbox on the native <dialog>: swipe, zoom, video." --source . --remote origin
+gh repo create maxfettinger/dialog-lightbox --public --description "A lightweight lightbox on the native <dialog>: swipe, zoom, video." --source . --remote origin
 git push -u origin main
 git push -u origin first-version
 ```
@@ -5301,7 +5301,7 @@ git pull
    ! NPM_CONFIG_TOKEN=<his token> bun publish --access public
    ```
    Expected: `dialog-lightbox@0.1.0` is published.
-3. Max opens the package's settings on npmjs.com, adds a trusted publisher (GitHub Actions, repository `fettinger-m/dialog-lightbox`, workflow `release.yml`) and deletes the token.
+3. Max opens the package's settings on npmjs.com, adds a trusted publisher (GitHub Actions, repository `maxfettinger/dialog-lightbox`, workflow `release.yml`) and deletes the token.
 4. After Max's yes, tag and push:
    ```bash
    git tag v0.1.0

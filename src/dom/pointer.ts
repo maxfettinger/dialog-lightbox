@@ -1,6 +1,6 @@
 // Pointer events on the viewport go through the gesture state machine; its intents become swipes, pans,
 // drags down to close, taps and double taps.
-import { clampView, FIT_VIEW, panBounds, type Rect, type View, viewRect } from "../core/geometry";
+import { clampView, FIT_VIEW, panBounds, type Rect, type View, viewRect } from "../core/geometry.js";
 import {
   type GestureInput,
   gesture,
@@ -8,7 +8,7 @@ import {
   type Mode,
   type PointerKind,
   type Target,
-} from "../core/gesture";
+} from "../core/gesture.js";
 import {
   dismissProgress,
   dismissView,
@@ -18,14 +18,14 @@ import {
   shouldDismiss,
   spring,
   swipeDirection,
-} from "../core/motion";
-import { step } from "../core/navigation";
-import { placeAt, play, stop } from "./animate";
-import { change, springStrip } from "./navigate";
-import { current, fitOf, place, type Session, wrapperSize } from "./session";
-import type { SlideEl } from "./slides";
-import { backdrop } from "./transitions";
-import { toggleZoom, zoomOf } from "./zoom";
+} from "../core/motion.js";
+import { step } from "../core/navigation.js";
+import { placeAt, play, stop } from "./animate.js";
+import { change, springStrip } from "./navigate.js";
+import { current, fitOf, place, type Session, wrapperSize } from "./session.js";
+import type { SlideEl } from "./slides.js";
+import { backdrop } from "./transitions.js";
+import { toggleZoom, zoomOf } from "./zoom.js";
 
 export interface PointerHooks {
   /** The current slide changed after a swipe. */

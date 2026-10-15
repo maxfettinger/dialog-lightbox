@@ -1,9 +1,9 @@
 // Moving between slides: the strip springs to the new slide, or back where there is none.
-import { FIT_VIEW } from "../core/geometry";
-import { spring } from "../core/motion";
-import { step } from "../core/navigation";
-import { play } from "./animate";
-import { current, GAP, place, type Session, setSlots } from "./session";
+import { FIT_VIEW } from "../core/geometry.js";
+import { spring } from "../core/motion.js";
+import { step } from "../core/navigation.js";
+import { play } from "./animate.js";
+import { current, GAP, place, type Session, setSlots } from "./session.js";
 
 /** Springs the strip from where it is to `to`, starting at `velocity` px/ms. */
 export async function springStrip(s: Session, to: number, velocity: number): Promise<void> {

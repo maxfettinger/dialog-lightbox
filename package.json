@@ -15,7 +15,11 @@
   "author": "Maximilian Fettinger",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fettinger-m/dialog-lightbox.git"
+    "url": "git+https://github.com/maxfettinger/dialog-lightbox.git"
+  },
+  "homepage": "https://github.com/maxfettinger/dialog-lightbox#readme",
+  "bugs": {
+    "url": "https://github.com/maxfettinger/dialog-lightbox/issues"
   },
   "type": "module",
   "exports": {
@@ -23,7 +27,8 @@
       "types": "./dist/types/index.d.ts",
       "default": "./dist/dialog-lightbox.js"
     },
-    "./dialog-lightbox.css": "./dist/dialog-lightbox.css"
+    "./dialog-lightbox.css": "./dist/dialog-lightbox.css",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
@@ -38,7 +43,8 @@
     "test": "bun test ./test/unit",
     "test:browser": "bun --bun playwright test",
     "size": "bun run build && bun scripts/size.ts",
-    "dev": "bun scripts/serve.ts"
+    "dev": "bun scripts/serve.ts",
+    "check:types": "bun run build && tsc --ignoreConfig --noEmit --module nodenext --moduleResolution nodenext --target es2022 --lib es2023,dom,dom.iterable --types '' dist/types/index.d.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

@@ -1,6 +1,6 @@
 // Helpers around the Web Animations API. The pattern everywhere: set the final state inline first, then
 // animate from the old state to it, so a cancelled or skipped animation still leaves the right state.
-import type { Insets, Rect, Size } from "../core/geometry";
+import type { Insets, Rect, Size } from "../core/geometry.js";
 
 export const DURATION = 300;
 export const EASE = "cubic-bezier(.4, 0, .22, 1)";

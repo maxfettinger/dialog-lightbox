@@ -21,17 +21,26 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+      # Trusted publishing needs npm 11.5.1 or later.
+      - run: npm install -g npm@^11.5.1
+      - name: The tag must match package.json
+        run: |
+          version=$(node -p "require('./package.json').version")
+          test "v$version" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME, package.json $version"; exit 1; }
       - run: bun install --frozen-lockfile
       - run: bun run check
       - run: bun run test
       - run: bun run size
+      - run: bun run check:types
       - name: Publish to npm
         run: |
           version=$(node -p "require('./package.json').version")
           if npm view "dialog-lightbox@$version" version > /dev/null 2>&1; then
             echo "dialog-lightbox@$version is on npm already"
           else
-            npm publish --access public
+            # A prerelease (1.0.0-rc.1) goes to the "next" tag, so "latest" stays a stable version.
+            case "$version" in *-*) tag=next ;; *) tag=latest ;; esac
+            npm publish --access public --tag "$tag"
           fi
       - run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "See CHANGELOG.md."
         env:

@@ -1,17 +1,17 @@
 // lightbox(): wires a gallery of links to a <dialog>. Each opening is a session (session.ts) that the other
 // dom/ modules work on; closing drops it and removes its listeners with one abort() call.
-import { FIT_VIEW, fit } from "../core/geometry";
-import { step } from "../core/navigation";
-import { clear, findControls, render } from "./controls";
-import { createHistory, hashId } from "./history";
-import { readSlide, readSlides, type SlideData } from "./links";
-import { change } from "./navigate";
-import { bindPointer } from "./pointer";
-import { areaOf, createSession, current, fitOf, measure, place, type Session, setSlots } from "./session";
-import { loadLarge, preload, type SlideEl } from "./slides";
-import { closeAnimation, openAnimation } from "./transitions";
-import { createVideo } from "./video";
-import { toggleZoom, zoomOf } from "./zoom";
+import { FIT_VIEW, fit } from "../core/geometry.js";
+import { step } from "../core/navigation.js";
+import { clear, findControls, render } from "./controls.js";
+import { createHistory, hashId } from "./history.js";
+import { readSlide, readSlides, type SlideData } from "./links.js";
+import { change } from "./navigate.js";
+import { bindPointer } from "./pointer.js";
+import { areaOf, createSession, current, fitOf, measure, place, type Session, setSlots } from "./session.js";
+import { loadLarge, preload, type SlideEl } from "./slides.js";
+import { closeAnimation, openAnimation } from "./transitions.js";
+import { createVideo } from "./video.js";
+import { toggleZoom, zoomOf } from "./zoom.js";
 
 export interface LightboxOptions {
   gallery: HTMLElement;
@@ -62,6 +62,18 @@ export function lightbox(options: LightboxOptions): Lightbox {
   };
   let s: Session | null = null;
   const video = createVideo(() => sync(), life.signal);
+  // A video without a known size is sized from its own metadata.
+  video.element.addEventListener(
+    "loadedmetadata",
+    () => {
+      const { videoWidth: width, videoHeight: height } = video.element;
+      if (!s || current(s).data.type !== "video" || current(s).data.aspect || !width || !height) return;
+      current(s).data.aspect = { width, height };
+      place(s);
+      sync();
+    },
+    { signal: life.signal },
+  );
   const hist = options.history === false ? null : createHistory(() => void close(true), life.signal);
 
   const links = (): HTMLAnchorElement[] => [...gallery.querySelectorAll<HTMLAnchorElement>("a[href]")];
@@ -125,7 +137,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
   }
 
   function onKey(event: KeyboardEvent): void {
-    if (!s || s.closing) return;
+    if (!s || s.closing || event.altKey || event.metaKey || event.ctrlKey) return;
     const target = event.target instanceof Element ? event.target : null;
     if (target?.closest("input, select, textarea")) return;
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
@@ -143,7 +155,8 @@ export function lightbox(options: LightboxOptions): Lightbox {
 
   /** `deep`: opened from a #dlb=<id> URL, so there is no history entry to add. */
   function open(index: number, deep = false): void {
-    if (s) return;
+    // One box per dialog, and none after destroy().
+    if (s || dialog.open || life.signal.aborted) return;
     const slides = readSlides(gallery, galleryId);
     if (!slides[index]) return;
     dialog.showModal();
@@ -272,6 +285,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
   const deepId = hist ? hashId() : null;
   if (deepId) {
     requestAnimationFrame(() => {
+      if (life.signal.aborted) return;
       const index = readSlides(gallery, galleryId).findIndex((data) => data.id === deepId);
       if (index >= 0) open(index, true);
     });

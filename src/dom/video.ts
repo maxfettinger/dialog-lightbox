@@ -6,8 +6,8 @@ import {
   type VideoEffect,
   type VideoEvent,
   type VideoState,
-} from "../core/video";
-import { FILL } from "./slides";
+} from "../core/video.js";
+import { FILL } from "./slides.js";
 
 export interface VideoController {
   readonly element: HTMLVideoElement;
