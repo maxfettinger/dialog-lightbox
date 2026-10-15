@@ -107,3 +107,16 @@ test("lightbox() needs a viewport in the dialog", async ({ fixture: page }) => {
   });
   expect(message).toContain("[data-dlb-viewport]");
 });
+
+test("destroy() closes an open box and stops opening on clicks", async ({ fixture: page }) => {
+  await openAt(page, "one", 0);
+  await page.evaluate(() => window.boxes[0]!.destroy());
+  await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
+  await expect(page.locator("[data-dlb-viewport] > *")).toHaveCount(0);
+  const opened = await page.evaluate(() => {
+    document.addEventListener("click", (event) => event.preventDefault(), { once: true });
+    document.querySelector<HTMLAnchorElement>("#one a")!.click();
+    return document.querySelector("dialog")!.hasAttribute("open");
+  });
+  expect(opened).toBe(false);
+});
