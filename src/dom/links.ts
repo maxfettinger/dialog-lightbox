@@ -30,7 +30,7 @@ export function readSlide(link: HTMLAnchorElement, index: number, galleryId: str
     src: link.href,
     srcset: dataset.dlbSrcset,
     ...resolveSize(Number(dataset.dlbWidth), Number(dataset.dlbHeight), natural, dataset.dlbSrcset),
-    audio: dataset.dlbAudio !== "false",
+    audio: dataset.dlbNoaudio === undefined,
   };
 }
 

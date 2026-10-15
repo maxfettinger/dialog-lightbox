@@ -1683,7 +1683,7 @@ Expected: 9 SVG files and `clip.mp4`, `clip.webm`, `silent.mp4`, `silent.webm`, 
       <a href="media/small.svg" data-dlb-width="300" data-dlb-height="200"><img src="media/small-thumb.svg" alt="Small" /></a>
       <a href="media/clip.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640"><img src="media/poster.svg" alt="Clip" /></a>
       <a href="media/clip.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640"><img src="media/poster.svg" alt="Clip again" /></a>
-      <a href="media/silent.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640" data-dlb-audio="false"><img src="media/poster.svg" alt="Silent clip" /></a>
+      <a href="media/silent.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640" data-dlb-noaudio><img src="media/poster.svg" alt="Silent clip" /></a>
       <a href="media/missing.svg" data-dlb-width="800" data-dlb-height="600"><img src="media/small-thumb.svg" alt="Missing" /></a>
     </div>
     <div class="spacer"></div>
@@ -4533,7 +4533,7 @@ On the links:
 | `data-dlb-srcset` | `srcset` for the large image; its largest `w` is taken as the native width |
 | `data-dlb-width`, `data-dlb-height` | Native size, if you have it. Without them the thumbnail's aspect ratio is used |
 | `data-dlb-id` | A stable id for `#dlb=` links. Without it the id is `<gallery id>-<number>` |
-| `data-dlb-audio="false"` | The video has no sound; the mute button is disabled |
+| `data-dlb-noaudio` | The video has no sound; the mute button is disabled |
 
 Inside the dialog:
 
@@ -4869,7 +4869,7 @@ Every `alt` describes what the photo shows, and every caption reads "What · Whe
           </li>
           <li>
             <figure>
-              <a href="media/clip-2.mp4" data-dlb-type="video" data-dlb-audio="false">
+              <a href="media/clip-2.mp4" data-dlb-type="video" data-dlb-noaudio>
                 <img src="media/clip-2-480.jpg" alt="Describe clip 2" loading="lazy" />
               </a>
               <figcaption>What · Where</figcaption>
