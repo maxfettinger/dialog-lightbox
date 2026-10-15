@@ -13,3 +13,6 @@ test-results/
 playwright-report/
 
 .DS_Store
+
+# Executing-plans workspace
+.superpowers/
