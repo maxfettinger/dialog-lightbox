@@ -13,6 +13,17 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", use: { browserName: "chromium" } },
+    {
+      // Desktop Linux and Windows show scrollbars that take room. macOS hides them, so force them on here.
+      name: "chromium-scrollbars",
+      use: {
+        browserName: "chromium",
+        launchOptions: {
+          ignoreDefaultArgs: ["--hide-scrollbars"],
+          args: ["--disable-features=OverlayScrollbar"],
+        },
+      },
+    },
     { name: "webkit", use: { browserName: "webkit" } },
     { name: "firefox", use: { browserName: "firefox" } },
   ],

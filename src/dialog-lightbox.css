@@ -9,7 +9,6 @@
   /* Scroll lock: a modal dialog alone doesn't stop the page scrolling on iOS. */
   html:has(dialog[data-dlb][open]) {
     overflow: hidden;
-    scrollbar-gutter: stable;
   }
 
   dialog[data-dlb] {
