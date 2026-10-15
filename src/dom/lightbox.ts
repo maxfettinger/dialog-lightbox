@@ -8,6 +8,7 @@ import { change } from "./navigate";
 import { createSession, current, fitOf, measure, place, type Session, setSlots } from "./session";
 import { loadLarge, type SlideEl } from "./slides";
 import { closeAnimation, openAnimation } from "./transitions";
+import { createVideo } from "./video";
 import { toggleZoom, zoomOf } from "./zoom";
 
 export interface LightboxOptions {
@@ -33,6 +34,7 @@ export interface Lightbox {
   prev(): void;
   readonly current: Slide | null;
   readonly count: number;
+  readonly video: HTMLVideoElement;
   on(type: LightboxEvent, handler: (slide: Slide) => void): () => void;
   destroy(): void;
 }
@@ -56,6 +58,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     close: new Set(),
   };
   let s: Session | null = null;
+  const video = createVideo(() => sync(), life.signal);
 
   const links = (): HTMLAnchorElement[] => [...gallery.querySelectorAll<HTMLAnchorElement>("a[href]")];
   const toSlide = ({ index, id, type, link }: SlideData): Slide => ({ index, id, type, link });
@@ -67,20 +70,22 @@ export function lightbox(options: LightboxOptions): Lightbox {
   function sync(): void {
     if (!s) return;
     const slide = current(s);
+    const isVideo = slide.data.type === "video";
+    const v = video.state;
     render(dialog, controls, {
       type: slide.data.type,
       index: s.index,
       count: s.slides.length,
       first: step(s.index, -1, s.slides.length, loop) === null,
       last: step(s.index, 1, s.slides.length, loop) === null,
-      loading: slide.status === "loading",
-      error: slide.status === "error",
+      loading: isVideo ? v.loading : slide.status === "loading",
+      error: isVideo ? v.phase === "error" : slide.status === "error",
       zoomable: zoomOf(s, slide) !== null,
       zoomed: s.view.scale > 1.01,
       uiHidden: s.uiHidden,
-      paused: false,
-      muted: false,
-      noaudio: false,
+      paused: isVideo && v.phase !== "playing" && v.phase !== "starting",
+      muted: v.muted,
+      noaudio: isVideo && !slide.data.audio,
     });
   }
 
@@ -99,10 +104,13 @@ export function lightbox(options: LightboxOptions): Lightbox {
     sync();
   }
 
-  /** After the current slide changed: events, state, loading. */
+  /** After the current slide changed: video, events, state, loading. */
   function changed(): void {
     if (!s) return;
-    emit("change", current(s).data);
+    const slide = current(s);
+    video.deactivate();
+    if (slide.data.type === "video") video.activate(slide.media, slide.data.src, controls.progress);
+    emit("change", slide.data);
     sync();
     void loadAround(s);
   }
@@ -118,6 +126,13 @@ export function lightbox(options: LightboxOptions): Lightbox {
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
       event.preventDefault();
       go(event.key === "ArrowLeft" ? -1 : 1);
+      return;
+    }
+    // Space and M on a video, unless a button has focus: Space would press it as well and toggle twice.
+    const action = event.key === " " ? "toggle" : event.key.toLowerCase() === "m" ? "toggle-mute" : null;
+    if (action && current(s).data.type === "video" && !target?.closest("button")) {
+      event.preventDefault();
+      video.send({ type: action });
     }
   }
 
@@ -132,6 +147,8 @@ export function lightbox(options: LightboxOptions): Lightbox {
     session.busy = true;
     bind(session);
     const slide = current(session);
+    // Still inside the user's click, so iOS lets the video start.
+    if (slide.data.type === "video") video.activate(slide.media, slide.data.src, controls.progress);
     emit("open", slide.data);
     emit("change", slide.data);
     sync();
@@ -151,6 +168,8 @@ export function lightbox(options: LightboxOptions): Lightbox {
     click(controls.prev, () => go(-1));
     click(controls.next, () => go(1));
     click(controls.zoom, () => void toggleZoom(session, sync));
+    click(controls.play, () => video.send({ type: "toggle" }));
+    click(controls.mute, () => video.send({ type: "toggle-mute" }));
     dialog.addEventListener("keydown", onKey, { signal });
     dialog.addEventListener(
       "cancel",
@@ -178,6 +197,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     const session = s;
     if (!session || session.closing) return;
     session.closing = true;
+    video.pause();
     await closeAnimation(session, dialog);
     finish();
   }
@@ -187,6 +207,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     const session = s;
     if (!session) return;
     s = null;
+    video.deactivate();
     session.abort.abort();
     session.strip.remove();
     clear(dialog);
@@ -233,6 +254,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     get current() {
       return s ? toSlide(current(s).data) : null;
     },
+    video: video.element,
     get count() {
       return s ? s.slides.length : links().length;
     },
