@@ -4,7 +4,8 @@ import { FIT_VIEW } from "../core/geometry";
 import { step } from "../core/navigation";
 import { clear, findControls, render } from "./controls";
 import { readSlides, type SlideData } from "./links";
-import { createSession, current, fitOf, measure, place, type Session } from "./session";
+import { change } from "./navigate";
+import { createSession, current, fitOf, measure, place, type Session, setSlots } from "./session";
 import { loadLarge, type SlideEl } from "./slides";
 
 export interface LightboxOptions {
@@ -25,6 +26,9 @@ export type LightboxEvent = "open" | "change" | "close";
 export interface Lightbox {
   open(index?: number): void;
   close(): void;
+  goTo(index: number): void;
+  next(): void;
+  prev(): void;
   readonly current: Slide | null;
   readonly count: number;
   on(type: LightboxEvent, handler: (slide: Slide) => void): () => void;
@@ -93,6 +97,28 @@ export function lightbox(options: LightboxOptions): Lightbox {
     sync();
   }
 
+  /** After the current slide changed: events, state, loading. */
+  function changed(): void {
+    if (!s) return;
+    emit("change", current(s).data);
+    sync();
+    void loadAround(s);
+  }
+
+  function go(direction: -1 | 1): void {
+    if (s && !s.busy && !s.closing) change(s, direction, 0, changed);
+  }
+
+  function onKey(event: KeyboardEvent): void {
+    if (!s || s.closing) return;
+    const target = event.target instanceof Element ? event.target : null;
+    if (target?.closest("input, select, textarea")) return;
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      event.preventDefault();
+      go(event.key === "ArrowLeft" ? -1 : 1);
+    }
+  }
+
   function open(index: number): void {
     if (s) return;
     const slides = readSlides(gallery, galleryId);
@@ -118,6 +144,9 @@ export function lightbox(options: LightboxOptions): Lightbox {
       for (const element of elements) element.addEventListener("click", action, { signal });
     };
     click(controls.close, () => close());
+    click(controls.prev, () => go(-1));
+    click(controls.next, () => go(1));
+    dialog.addEventListener("keydown", onKey, { signal });
     dialog.addEventListener(
       "cancel",
       (event) => {
@@ -177,6 +206,23 @@ export function lightbox(options: LightboxOptions): Lightbox {
   return {
     open: (index = 0) => open(index),
     close: () => close(),
+    goTo(index) {
+      if (!s || s.busy || s.closing || index === s.index || !s.slides[index]) return;
+      // A neighbour gets the slide animation; any other slide is a jump.
+      const forward = index === step(s.index, 1, s.slides.length, loop);
+      if (forward || index === step(s.index, -1, s.slides.length, loop)) {
+        change(s, forward ? 1 : -1, 0, changed);
+        return;
+      }
+      current(s).base = 1;
+      s.view = FIT_VIEW;
+      s.stripX = 0;
+      setSlots(s, index);
+      place(s);
+      changed();
+    },
+    next: () => go(1),
+    prev: () => go(-1),
     get current() {
       return s ? toSlide(current(s).data) : null;
     },
