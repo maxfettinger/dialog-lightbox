@@ -35,3 +35,14 @@ test("resizing the window resets the zoom", async ({ fixture: page }) => {
   await page.setViewportSize({ width: 600, height: 844 });
   await expect(page.locator("dialog")).not.toHaveAttribute("data-dlb-zoomed");
 });
+
+test("zooming right after opening isn't undone by the first resize observation", async ({
+  fixture: page,
+}) => {
+  await page.evaluate(() => {
+    document.querySelector<HTMLAnchorElement>("#one a")!.click();
+    document.querySelector<HTMLButtonElement>("[data-dlb-zoom]")!.click();
+  });
+  await page.waitForTimeout(200);
+  await expect(page.locator("dialog")).toHaveAttribute("data-dlb-zoomed", "");
+});

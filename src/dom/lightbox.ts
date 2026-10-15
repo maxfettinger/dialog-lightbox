@@ -5,6 +5,7 @@ import { step } from "../core/navigation";
 import { clear, findControls, render } from "./controls";
 import { readSlides, type SlideData } from "./links";
 import { change } from "./navigate";
+import { bindPointer } from "./pointer";
 import { createSession, current, fitOf, measure, place, type Session, setSlots } from "./session";
 import { loadLarge, type SlideEl } from "./slides";
 import { closeAnimation, openAnimation } from "./transitions";
@@ -182,7 +183,14 @@ export function lightbox(options: LightboxOptions): Lightbox {
     // The browser closed the dialog itself, after an Escape it didn't let us cancel.
     dialog.addEventListener("close", () => finish(), { signal });
     const resize = new ResizeObserver(() => {
+      // The first callback comes right after observe() without any change: keep the zoom then.
+      const before = `${session.size.width} ${session.size.height} ${session.area.width} ${session.area.height}`;
       measure(session, viewport);
+      if (
+        before === `${session.size.width} ${session.size.height} ${session.area.width} ${session.area.height}`
+      ) {
+        return;
+      }
       current(session).base = 1;
       session.view = FIT_VIEW;
       place(session);
@@ -190,6 +198,12 @@ export function lightbox(options: LightboxOptions): Lightbox {
     });
     resize.observe(viewport);
     signal.addEventListener("abort", () => resize.disconnect());
+    bindPointer(session, viewport, dialog, {
+      changed,
+      close: () => void close(),
+      sync,
+      toggleVideo: () => video.send({ type: "toggle" }),
+    });
   }
 
   /** Closes with the zoom back to the thumbnail. */
