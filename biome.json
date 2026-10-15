@@ -19,5 +19,17 @@
   },
   "files": {
     "includes": ["**", "!test/browser/media"]
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["demo/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noRedundantRoles": "off"
+          }
+        }
+      }
+    }
+  ]
 }
