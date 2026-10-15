@@ -132,7 +132,7 @@ git switch -c first-version
   "author": "Maximilian Fettinger",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fettinger-m/dialog-lightbox.git"
+    "url": "git+https://github.com/maxfettinger/dialog-lightbox.git"
   },
   "type": "module",
   "exports": {
@@ -1683,7 +1683,7 @@ Expected: 9 SVG files and `clip.mp4`, `clip.webm`, `silent.mp4`, `silent.webm`, 
       <a href="media/small.svg" data-dlb-width="300" data-dlb-height="200"><img src="media/small-thumb.svg" alt="Small" /></a>
       <a href="media/clip.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640"><img src="media/poster.svg" alt="Clip" /></a>
       <a href="media/clip.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640"><img src="media/poster.svg" alt="Clip again" /></a>
-      <a href="media/silent.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640" data-dlb-audio="false"><img src="media/poster.svg" alt="Silent clip" /></a>
+      <a href="media/silent.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640" data-dlb-noaudio><img src="media/poster.svg" alt="Silent clip" /></a>
       <a href="media/missing.svg" data-dlb-width="800" data-dlb-height="600"><img src="media/small-thumb.svg" alt="Missing" /></a>
     </div>
     <div class="spacer"></div>
@@ -4533,7 +4533,7 @@ On the links:
 | `data-dlb-srcset` | `srcset` for the large image; its largest `w` is taken as the native width |
 | `data-dlb-width`, `data-dlb-height` | Native size, if you have it. Without them the thumbnail's aspect ratio is used |
 | `data-dlb-id` | A stable id for `#dlb=` links. Without it the id is `<gallery id>-<number>` |
-| `data-dlb-audio="false"` | The video has no sound; the mute button is disabled |
+| `data-dlb-noaudio` | The video has no sound; the mute button is disabled |
 
 Inside the dialog:
 
@@ -4869,7 +4869,7 @@ Every `alt` describes what the photo shows, and every caption reads "What · Whe
           </li>
           <li>
             <figure>
-              <a href="media/clip-2.mp4" data-dlb-type="video" data-dlb-audio="false">
+              <a href="media/clip-2.mp4" data-dlb-type="video" data-dlb-noaudio>
                 <img src="media/clip-2-480.jpg" alt="Describe clip 2" loading="lazy" />
               </a>
               <figcaption>What · Where</figcaption>
@@ -5256,10 +5256,10 @@ git commit -m "Add a demo with two film strips" -m "Free stock photos and clips 
 
 - [ ] **Step 1: Create the repository (ask Max first)**
 
-Ask Max whether to create the public repository `fettinger-m/dialog-lightbox` and push. Only after a yes:
+Ask Max whether to create the public repository `maxfettinger/dialog-lightbox` and push. Only after a yes:
 
 ```bash
-gh repo create fettinger-m/dialog-lightbox --public --description "A lightweight lightbox on the native <dialog>: swipe, zoom, video." --source . --remote origin
+gh repo create maxfettinger/dialog-lightbox --public --description "A lightweight lightbox on the native <dialog>: swipe, zoom, video." --source . --remote origin
 git push -u origin main
 git push -u origin first-version
 ```
@@ -5301,7 +5301,7 @@ git pull
    ! NPM_CONFIG_TOKEN=<his token> bun publish --access public
    ```
    Expected: `dialog-lightbox@0.1.0` is published.
-3. Max opens the package's settings on npmjs.com, adds a trusted publisher (GitHub Actions, repository `fettinger-m/dialog-lightbox`, workflow `release.yml`) and deletes the token.
+3. Max opens the package's settings on npmjs.com, adds a trusted publisher (GitHub Actions, repository `maxfettinger/dialog-lightbox`, workflow `release.yml`) and deletes the token.
 4. After Max's yes, tag and push:
    ```bash
    git tag v0.1.0

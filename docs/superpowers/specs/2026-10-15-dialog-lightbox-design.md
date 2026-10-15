@@ -102,7 +102,7 @@ thumbnail.
 | `data-dlb-srcset` | no | `srcset` for the large image. The largest `w` descriptor is taken as the photo's native width. |
 | `data-dlb-width`, `data-dlb-height` | no | Native size. Overrides the fallbacks below. |
 | `data-dlb-id` | no | Stable id for deep links. |
-| `data-dlb-audio="false"` | no | The video has no audio track; the mute button is disabled. |
+| `data-dlb-noaudio` | no | The video has no audio track; the mute button is disabled. |
 
 Size resolution, in order:
 
@@ -616,7 +616,7 @@ network:
 - `object-position` other than center for cropped thumbnails.
 - A hosted demo on GitHub Pages.
 - Switching the portfolio from PhotoSwipe to this library. That is its own project afterwards, including
-  `data-dlb-audio="false"` from `prepare-photos.py`.
+  `data-dlb-noaudio` from `prepare-photos.py`.
 
 ## 17. Risks to check early
 

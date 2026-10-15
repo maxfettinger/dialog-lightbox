@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>dialog-lightbox test fixture</title>
+    <link rel="stylesheet" href="../../src/dialog-lightbox.css" />
+    <style>
+      body { margin: 0; font: 14px system-ui, sans-serif; }
+      .strip { display: flex; gap: 8px; overflow-x: auto; padding: 8px; }
+      .strip img { display: block; width: 150px; height: 100px; object-fit: cover; }
+      .spacer { height: 120vh; }
+      dialog { background: transparent; color: #fff; }
+      dialog::backdrop { background: rgb(0 0 0 / var(--dlb-opacity)); }
+      [data-dlb-viewport] { padding: 40px 0 60px; }
+      .top, .bottom { position: absolute; inset-inline: 0; display: flex; justify-content: space-between; height: 36px; }
+      .top { top: 0; }
+      .bottom { bottom: 0; }
+      [data-dlb-ui-hidden] .top { visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div class="strip" id="one">
+      <a href="media/wide.svg" data-dlb-width="3200" data-dlb-height="800" data-dlb-id="wide"><img src="media/wide-thumb.svg" alt="Wide" /></a>
+      <a href="media/tall.svg" data-dlb-srcset="media/tall.svg 600w"><img src="media/tall-thumb.svg" alt="Tall" /></a>
+      <a href="media/small.svg" data-dlb-width="300" data-dlb-height="200"><img src="media/small-thumb.svg" alt="Small" /></a>
+      <a href="media/clip.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640"><img src="media/poster.svg" alt="Clip" /></a>
+      <a href="media/clip.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640"><img src="media/poster.svg" alt="Clip again" /></a>
+      <a href="media/silent.mp4" data-dlb-type="video" data-dlb-width="360" data-dlb-height="640" data-dlb-noaudio><img src="media/poster.svg" alt="Silent clip" /></a>
+      <a href="media/missing.svg" data-dlb-width="800" data-dlb-height="600"><img src="media/small-thumb.svg" alt="Missing" /></a>
+    </div>
+    <div class="spacer"></div>
+    <div class="strip" id="two" data-loop="true">
+      <a href="media/square.svg"><img src="media/square-thumb.svg" alt="Square" /></a>
+      <a href="media/wide.svg" data-dlb-width="3200" data-dlb-height="800"><img src="media/wide-thumb.svg" alt="Wide again" /></a>
+      <a href="media/tall.svg" data-dlb-width="600" data-dlb-height="900"><img src="media/tall-thumb.svg" alt="Tall again" /></a>
+    </div>
+    <p id="four"><a href="media/clip.mp4" data-dlb-type="video">A video without size or thumbnail</a></p>
+    <p id="three" data-history="false"><a href="media/square.svg">A text link</a></p>
+    <dialog aria-label="Photo viewer">
+      <div data-dlb-viewport></div>
+      <div class="top">
+        <span data-dlb-counter></span>
+        <button type="button" data-dlb-zoom>Zoom</button>
+        <button type="button" data-dlb-play>Play</button>
+        <button type="button" data-dlb-mute>Sound</button>
+        <button type="button" data-dlb-close>Close</button>
+      </div>
+      <div class="bottom">
+        <button type="button" data-dlb-prev>Previous</button>
+        <span data-dlb-progress></span>
+        <button type="button" data-dlb-next>Next</button>
+      </div>
+    </dialog>
+    <script type="module" src="./fixture.ts"></script>
+  </body>
+</html>
