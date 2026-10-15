@@ -7,6 +7,7 @@ import { readSlides, type SlideData } from "./links";
 import { change } from "./navigate";
 import { createSession, current, fitOf, measure, place, type Session, setSlots } from "./session";
 import { loadLarge, type SlideEl } from "./slides";
+import { closeAnimation, openAnimation } from "./transitions";
 
 export interface LightboxOptions {
   gallery: HTMLElement;
@@ -127,14 +128,16 @@ export function lightbox(options: LightboxOptions): Lightbox {
     viewport.focus({ preventScroll: true });
     const session = createSession(slides, index, loop, viewport);
     s = session;
+    session.busy = true;
     bind(session);
     const slide = current(session);
     emit("open", slide.data);
     emit("change", slide.data);
-    place(session);
-    dialog.style.setProperty("--dlb-opacity", "1");
     sync();
     void loadAround(session);
+    void openAnimation(session, dialog).then(() => {
+      session.busy = false;
+    });
   }
 
   /** The session's listeners, all removed by session.abort.abort(). */
@@ -143,7 +146,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     const click = (elements: HTMLElement[], action: () => void): void => {
       for (const element of elements) element.addEventListener("click", action, { signal });
     };
-    click(controls.close, () => close());
+    click(controls.close, () => void close());
     click(controls.prev, () => go(-1));
     click(controls.next, () => go(1));
     dialog.addEventListener("keydown", onKey, { signal });
@@ -151,7 +154,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
       "cancel",
       (event) => {
         event.preventDefault();
-        close();
+        void close();
       },
       { signal },
     );
@@ -168,10 +171,12 @@ export function lightbox(options: LightboxOptions): Lightbox {
     signal.addEventListener("abort", () => resize.disconnect());
   }
 
-  function close(): void {
+  /** Closes with the zoom back to the thumbnail. */
+  async function close(): Promise<void> {
     const session = s;
     if (!session || session.closing) return;
     session.closing = true;
+    await closeAnimation(session, dialog);
     finish();
   }
 
@@ -205,7 +210,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
 
   return {
     open: (index = 0) => open(index),
-    close: () => close(),
+    close: () => void close(),
     goTo(index) {
       if (!s || s.busy || s.closing || index === s.index || !s.slides[index]) return;
       // A neighbour gets the slide animation; any other slide is a jump.
