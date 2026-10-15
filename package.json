@@ -33,7 +33,9 @@
   ],
   "scripts": {
     "check": "biome check . && tsc",
-    "test": "bun test ./test/unit"
+    "test": "bun test ./test/unit",
+    "test:browser": "bun --bun playwright test",
+    "dev": "bun scripts/serve.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

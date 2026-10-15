@@ -1,10 +1,23 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
-  "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 110 },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 110
+  },
   "linter": {
     "rules": {
-      "style": { "noNonNullAssertion": "off" }
+      "style": {
+        "noNonNullAssertion": "off"
+      }
     }
+  },
+  "files": {
+    "includes": ["**", "!test/browser/media"]
   }
 }

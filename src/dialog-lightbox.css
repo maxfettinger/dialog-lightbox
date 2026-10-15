@@ -1,0 +1,45 @@
+/* dialog-lightbox: layout only. Colors, fonts and buttons belong to the page. */
+@property --dlb-opacity {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@layer dialog-lightbox {
+  /* Scroll lock: a modal dialog alone doesn't stop the page scrolling on iOS. */
+  html:has(dialog[data-dlb][open]) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+  }
+
+  dialog[data-dlb] {
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overscroll-behavior: contain;
+  }
+
+  [data-dlb-viewport] {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  [data-dlb-viewport]:focus {
+    outline: none;
+  }
+
+  [data-dlb-slide] {
+    position: absolute;
+    inset: 0;
+  }
+}
