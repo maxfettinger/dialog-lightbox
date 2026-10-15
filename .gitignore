@@ -1,0 +1,15 @@
+# Local reference material (PhotoSwipe clone, portfolio copies)
+context/
+
+# Claude Code files
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+
+# Build and test output
+node_modules/
+dist/
+test-results/
+playwright-report/
+
+.DS_Store
