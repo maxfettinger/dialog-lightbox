@@ -1,4 +1,6 @@
 // The size budget: the script at most 9 kB (the spec said 6 kB, see the changelog) minified and gzipped, the CSS at most 1 kB.
+export {};
+
 const js = await Bun.file("dist/dialog-lightbox.js").bytes();
 const css = Bun.file("dist/dialog-lightbox.css").size;
 const gzipped = Bun.gzipSync(js).length;
