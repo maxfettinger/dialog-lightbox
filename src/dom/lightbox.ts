@@ -8,6 +8,7 @@ import { change } from "./navigate";
 import { createSession, current, fitOf, measure, place, type Session, setSlots } from "./session";
 import { loadLarge, type SlideEl } from "./slides";
 import { closeAnimation, openAnimation } from "./transitions";
+import { toggleZoom, zoomOf } from "./zoom";
 
 export interface LightboxOptions {
   gallery: HTMLElement;
@@ -74,8 +75,8 @@ export function lightbox(options: LightboxOptions): Lightbox {
       last: step(s.index, 1, s.slides.length, loop) === null,
       loading: slide.status === "loading",
       error: slide.status === "error",
-      zoomable: false,
-      zoomed: false,
+      zoomable: zoomOf(s, slide) !== null,
+      zoomed: s.view.scale > 1.01,
       uiHidden: s.uiHidden,
       paused: false,
       muted: false,
@@ -149,6 +150,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     click(controls.close, () => void close());
     click(controls.prev, () => go(-1));
     click(controls.next, () => go(1));
+    click(controls.zoom, () => void toggleZoom(session, sync));
     dialog.addEventListener("keydown", onKey, { signal });
     dialog.addEventListener(
       "cancel",
