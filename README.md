@@ -12,6 +12,21 @@ What it does:
 - the back button closes the box, and a `#dlb=<id>` link opens a photo directly
 - arrow keys and Escape; Space and M on videos
 
+## Compared with other lightboxes
+
+Sizes are the files in each npm package compressed with gzip, measured on 15 October 2026. Our CSS is shipped unminified. Their CSS includes a theme; ours only does layout.
+
+| | Script + CSS | Native `<dialog>` | Video | Back button | License |
+|---|---|---|---|---|---|
+| dialog-lightbox | 8.7 + 0.5 kB | yes | video files | yes | MIT |
+| [PhotoSwipe 5](https://photoswipe.com) | 20.9 + 2.4 kB | no | plugin | no | MIT |
+| [GLightbox](https://github.com/biati-digital/glightbox) | 15.3 + 2.6 kB | no | YouTube, Vimeo, files | no | MIT |
+| [lightGallery](https://www.lightgalleryjs.com) | 18.9 + 2.8 kB, plugins extra | no | plugin | plugin | GPLv3 or paid |
+| [Fancybox 6](https://fancyapps.com/fancybox/) | 36.8 + 6.4 kB | yes | YouTube, Vimeo, files | plugin | paid |
+| [basicLightbox](https://github.com/electerious/basicLightbox) | 1.3 + 0.4 kB | no | any HTML | no | MIT |
+
+All of them have no dependencies and TypeScript types, except basicLightbox (no types). dialog-lightbox does not have pinch zoom, YouTube or Vimeo, a thumbnail strip, fullscreen or plugins. If you need one of those, use one of the libraries above.
+
 ## Install
 
 ```sh
@@ -106,7 +121,7 @@ On the links:
 | `data-dlb-srcset` | `srcset` for the large image; its largest `w` is taken as the native width |
 | `data-dlb-width`, `data-dlb-height` | Native size, if you have it. Without them the thumbnail's aspect ratio is used |
 | `data-dlb-id` | A stable id for `#dlb=` links. Without it the id is `<gallery id>-<number>` |
-| `data-dlb-audio="false"` | The video has no sound; the mute button is disabled |
+| `data-dlb-noaudio` | The video has no sound; the mute button is disabled |
 
 Inside the dialog:
 
