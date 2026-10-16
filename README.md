@@ -35,7 +35,22 @@ All of them have no dependencies and TypeScript types, except basicLightbox (no 
 npm install dialog-lightbox
 ```
 
-`bun add` and `pnpm add` work the same way. Without a package manager, copy `dist/dialog-lightbox.js` and `dist/dialog-lightbox.css` from the package into your site.
+`bun add` and `pnpm add` work the same way.
+
+### Without npm
+
+A plain HTML page can load both files from the jsDelivr CDN, with no build step:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialog-lightbox@0.1/dist/dialog-lightbox.css" />
+<script type="module">
+  import { lightbox } from "https://cdn.jsdelivr.net/npm/dialog-lightbox@0.1/dist/dialog-lightbox.js";
+
+  lightbox({ gallery: document.querySelector(".gallery"), dialog: document.querySelector("dialog") });
+</script>
+```
+
+`@0.1` gets the newest 0.1.x release. To host the files yourself, download [dialog-lightbox.js](https://cdn.jsdelivr.net/npm/dialog-lightbox@0.1/dist/dialog-lightbox.js) and [dialog-lightbox.css](https://cdn.jsdelivr.net/npm/dialog-lightbox@0.1/dist/dialog-lightbox.css) and put them next to your page.
 
 ## Markup
 

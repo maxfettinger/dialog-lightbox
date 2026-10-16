@@ -30,6 +30,7 @@
     "./dialog-lightbox.css": "./dist/dialog-lightbox.css",
     "./package.json": "./package.json"
   },
+  "jsdelivr": "./dist/dialog-lightbox.js",
   "files": [
     "dist"
   ],

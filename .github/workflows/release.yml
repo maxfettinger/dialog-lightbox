@@ -42,6 +42,7 @@ jobs:
             case "$version" in *-*) tag=next ;; *) tag=latest ;; esac
             npm publish --access public --tag "$tag"
           fi
-      - run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "See CHANGELOG.md."
+      # The built files go on the release too, for people who download them instead of using npm.
+      - run: gh release create "$GITHUB_REF_NAME" dist/dialog-lightbox.js dist/dialog-lightbox.css --title "$GITHUB_REF_NAME" --notes "See CHANGELOG.md."
         env:
           GH_TOKEN: ${{ github.token }}
