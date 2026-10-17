@@ -19,9 +19,15 @@ export interface VideoController {
   /** Pauses without releasing, for the closing animation. */
   pause(): void;
   send(event: VideoEvent): void;
+  /** Whether the browser can show the video in its own fullscreen player. */
+  readonly canFullscreen: boolean;
+  /** Hands the video to the browser's fullscreen player; time, pause and sound carry over both ways. */
+  fullscreen(): void;
 }
 
 type SaveData = { connection?: { saveData?: boolean } };
+/** iPhone Safari puts only a video fullscreen, into Apple's player. */
+type Webkit = { webkitEnterFullscreen?: () => void };
 
 export function createVideo(onChange: () => void, signal: AbortSignal): VideoController {
   const element = document.createElement("video");
@@ -89,6 +95,14 @@ export function createVideo(onChange: () => void, signal: AbortSignal): VideoCon
   listen("volumechange", () => {
     if (element.muted !== state.muted) send({ type: "volume", muted: element.muted });
   });
+  // Native controls only in the browser's fullscreen player.
+  document.addEventListener(
+    "fullscreenchange",
+    () => {
+      element.controls = document.fullscreenElement === element;
+    },
+    { signal },
+  );
   document.addEventListener(
     "visibilitychange",
     () => {
@@ -113,6 +127,16 @@ export function createVideo(onChange: () => void, signal: AbortSignal): VideoCon
     },
     pause() {
       element.pause();
+    },
+    canFullscreen: document.fullscreenEnabled || "webkitEnterFullscreen" in element,
+    fullscreen() {
+      if (!document.fullscreenEnabled) (element as HTMLVideoElement & Webkit).webkitEnterFullscreen?.();
+      else {
+        element.controls = true;
+        element.requestFullscreen().catch(() => {
+          element.controls = false;
+        });
+      }
     },
     send,
   };

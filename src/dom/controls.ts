@@ -1,7 +1,7 @@
 // The page's own buttons and outputs in the dialog, found by data-dlb-* attributes, and the state
 // attributes the page styles with.
 
-const NAMES = ["close", "prev", "next", "zoom", "counter", "play", "mute", "progress"] as const;
+const NAMES = ["close", "prev", "next", "zoom", "counter", "play", "mute", "progress", "fullscreen"] as const;
 
 export type Controls = Record<(typeof NAMES)[number], HTMLElement[]>;
 
@@ -20,6 +20,8 @@ export interface UiState {
   paused: boolean;
   muted: boolean;
   noaudio: boolean;
+  /** The current slide is a video and the browser can show it fullscreen. */
+  fullscreen: boolean;
 }
 
 export function findControls(dialog: HTMLDialogElement): Controls {
@@ -48,6 +50,7 @@ export function render(dialog: HTMLDialogElement, controls: Controls, ui: UiStat
   disable(controls.next, ui.last);
   disable(controls.zoom, !ui.zoomable);
   disable(controls.mute, ui.noaudio);
+  disable(controls.fullscreen, !ui.fullscreen);
   press(controls.zoom, ui.zoomed);
   press(controls.play, !ui.paused);
   press(controls.mute, ui.muted);

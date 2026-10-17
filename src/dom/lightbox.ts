@@ -111,6 +111,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
       paused: isVideo && v.phase !== "playing" && v.phase !== "starting",
       muted: v.muted,
       noaudio: isVideo && !slide.data.audio,
+      fullscreen: isVideo && video.canFullscreen,
     });
   }
 
@@ -215,6 +216,9 @@ export function lightbox(options: LightboxOptions): Lightbox {
       zoom: () => void toggleZoom(session, sync),
       play: () => video.send({ type: "toggle" }),
       mute: () => video.send({ type: "toggle-mute" }),
+      fullscreen: () => {
+        if (current(session).data.type === "video") video.fullscreen();
+      },
     };
     dialog.addEventListener(
       "click",

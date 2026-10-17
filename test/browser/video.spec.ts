@@ -102,3 +102,28 @@ test("a video without width, height or thumbnail appears once its metadata is kn
   await page.mouse.click(view!.x + view!.width / 2, view!.y + view!.height / 2);
   await expect(page.locator("dialog")).toHaveAttribute("open", "");
 });
+
+test("the fullscreen button hands the playing video to the browser's player and takes it back", async ({
+  fixture: page,
+}) => {
+  await openAt(page, "one", 3);
+  const video = page.locator("[data-dlb-current] video");
+  await expect(page.locator("dialog")).not.toHaveAttribute("data-dlb-paused");
+  await page.locator("[data-dlb-fullscreen]").click();
+  await page.waitForFunction(() => document.fullscreenElement instanceof HTMLVideoElement);
+  expect(await video.evaluate((v: HTMLVideoElement) => v.controls)).toBe(true);
+  await page.evaluate(() => document.exitFullscreen());
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.controls)).toBe(false);
+  await expect(video).toHaveCount(1);
+  await expect(page.locator("dialog")).toHaveAttribute("open", "");
+});
+
+test("the fullscreen button is disabled on photos", async ({ fixture: page }) => {
+  await openAt(page, "one", 0);
+  await expect(page.locator("[data-dlb-fullscreen]")).toBeDisabled();
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator("[data-dlb-counter]")).toHaveText("4 / 7");
+  await expect(page.locator("[data-dlb-fullscreen]")).toBeEnabled();
+});
