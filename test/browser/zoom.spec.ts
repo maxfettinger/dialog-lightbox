@@ -46,3 +46,10 @@ test("zooming right after opening isn't undone by the first resize observation",
   await page.waitForTimeout(200);
   await expect(page.locator("dialog")).toHaveAttribute("data-dlb-zoomed", "");
 });
+
+test("a CSS reset that caps every element's width does not stop the zoom", async ({ fixture: page }) => {
+  await page.addStyleTag({ content: "* { max-width: 100%; max-inline-size: 100%; }" });
+  await openAt(page, "one", 0);
+  await page.locator("[data-dlb-zoom]").click();
+  await expect(page.locator("[data-dlb-current] > div")).toHaveCSS("width", "1170px");
+});

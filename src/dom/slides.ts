@@ -25,7 +25,8 @@ export function createSlide(data: SlideData): SlideEl {
   el.dataset.dlbSlide = "";
   el.style.cssText = "position:absolute;inset:0";
   const media = document.createElement("div");
-  media.style.cssText = "position:absolute;left:0;top:0;transform-origin:0 0";
+  // max-width:none: a zoomed wrapper is wider than the slide, whatever a page's CSS reset caps.
+  media.style.cssText = "position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;max-height:none";
   if (data.thumb) {
     // The thumbnail is loaded already, so it shows at once. For a video it is the poster.
     const alt = data.type === "video" ? data.thumb.alt : "";
