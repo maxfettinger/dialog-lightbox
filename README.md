@@ -148,8 +148,9 @@ Inside the dialog:
 | `[data-dlb-close]`, `[data-dlb-prev]`, `[data-dlb-next]`, `[data-dlb-zoom]` | Buttons; disabled where they can't act |
 | `[data-dlb-counter]` | Gets "3 / 16" |
 | `[data-dlb-play]`, `[data-dlb-mute]` | Video buttons with `aria-pressed` |
+| `[data-dlb-fullscreen]` | Opens the video in the browser's own fullscreen player, with native controls; on iPhone that is Apple's player. Time, pause and sound carry over both ways. Disabled on photos |
 | `[data-dlb-progress]` | Gets `--dlb-progress` from 0 to 1 while a video plays |
-| `<template data-dlb-overlay>` | Copied over the media of each slide as `<div data-dlb-overlay>`, which covers exactly the photo or video and moves, swipes and shrinks with it. `data-dlb-overlay="video"` or `"image"` limits it to one slide type, and you can have one template of each. The buttons and progress bars above work inside it too |
+| `<template data-dlb-overlay>` | Copied over the media of each slide as `<div data-dlb-overlay>` (select the copies with `div[data-dlb-overlay]`, since the template has the attribute too), which covers exactly the photo or video and moves, swipes and shrinks with it. `data-dlb-overlay="video"` or `"image"` limits it to one slide type, and you can have one template of each. The buttons and progress bars above work inside it too |
 
 State on the dialog, for your CSS: `data-dlb-type` (`image` or `video`), `data-dlb-first`, `data-dlb-last`, `data-dlb-loading`, `data-dlb-error`, `data-dlb-zoomable`, `data-dlb-zoomed`, `data-dlb-ui-hidden` (after a tap on a photo), `data-dlb-paused`, `data-dlb-muted`, `data-dlb-noaudio`, and `data-dlb-animating` while the media zoom from or to the thumbnail or are dragged down. The current slide has `data-dlb-current`, so overlay copies in the neighbouring slides can look different, and the slides that aren't current are `inert`. The library's CSS fades an overlay out while the dialog is animating or zoomed. `--dlb-opacity` goes from 0 to 1 while the box opens, and back while it closes or is dragged down.
 
