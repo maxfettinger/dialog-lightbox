@@ -1,6 +1,6 @@
 // lightbox(): wires a gallery of links to a <dialog>. Each opening is a session (session.ts) that the other
 // dom/ modules work on; closing drops it and removes its listeners with one abort() call.
-import { FIT_VIEW, fit } from "../core/geometry.js";
+import { FIT_VIEW, fit, viewRect } from "../core/geometry.js";
 import { step } from "../core/navigation.js";
 import { clear, findControls, render } from "./controls.js";
 import { createHistory, hashId } from "./history.js";
@@ -113,6 +113,20 @@ export function lightbox(options: LightboxOptions): Lightbox {
       noaudio: isVideo && !slide.data.audio,
       fullscreen: isVideo && video.canFullscreen,
     });
+    settle();
+  }
+
+  /** Once nothing moves: the current media's rectangle in --dlb-media-*, and data-dlb-moving off. */
+  function settle(): void {
+    if (!s || s.closing || s.gesture.phase === "dragging") return;
+    if (dialog.getAnimations({ subtree: true }).some((a) => a.constructor === Animation)) return;
+    const f = fitOf(s, current(s));
+    if (f) {
+      const r = viewRect(f, s.view);
+      for (const [name, value] of Object.entries(r))
+        dialog.style.setProperty(`--dlb-media-${name}`, `${value}px`);
+    }
+    dialog.removeAttribute("data-dlb-moving");
   }
 
   /** Loads the current slide's large image first, then its neighbours'. */
@@ -229,6 +243,8 @@ export function lightbox(options: LightboxOptions): Lightbox {
       { signal },
     );
     dialog.addEventListener("keydown", onKey, { signal });
+    dialog.addEventListener("dlbmove", () => dialog.toggleAttribute("data-dlb-moving", true), { signal });
+    dialog.addEventListener("dlbsettle", settle, { signal });
     dialog.addEventListener(
       "cancel",
       (event) => {
@@ -286,6 +302,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     session.abort.abort();
     session.strip.remove();
     clear(dialog);
+    for (const name of ["x", "y", "width", "height"]) dialog.style.removeProperty(`--dlb-media-${name}`);
     if (dialog.open) dialog.close();
     const slide = current(session);
     slide.data.link.focus({ preventScroll: true });

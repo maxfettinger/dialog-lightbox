@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+The dialog reports the current media's rectangle in `--dlb-media-x`, `-y`, `-width` and `-height` once it has settled, and has `data-dlb-moving` while anything moves.
+
 A `[data-dlb-fullscreen]` button opens the current video in the browser's own fullscreen player. The size check allows 10 kB for the script now.
 
 A `<template data-dlb-overlay>` in the dialog puts the page's own controls over each photo or video, so they move with the media. The dialog has `data-dlb-animating` during the opening and closing zoom and the drag down. Buttons work wherever they are in the dialog, slides that aren't current are inert, and the CSS is now minified.

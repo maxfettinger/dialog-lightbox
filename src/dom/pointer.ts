@@ -97,6 +97,7 @@ export function bindPointer(
   };
 
   const drag = (mode: Mode, dx: number, dy: number): void => {
+    dialog.toggleAttribute("data-dlb-moving", true);
     // A drag begins with dx = dy = 0: remember where everything was.
     if (dx === 0 && dy === 0) s.from = { stripX: s.stripX, view: s.view };
     const { from } = s;
@@ -122,6 +123,12 @@ export function bindPointer(
   };
 
   const release = (mode: Mode, dx: number, dy: number, vx: number, vy: number): void => {
+    land(mode, dx, dy, vx, vy);
+    // Without motion nothing animates afterwards, so say here that the media have settled.
+    hooks.sync();
+  };
+
+  const land = (mode: Mode, dx: number, dy: number, vx: number, vy: number): void => {
     if (mode === "swipe") {
       const direction = swipeDirection(dx, vx, s.size.width);
       if (direction === 0) void springStrip(s, 0, vx);

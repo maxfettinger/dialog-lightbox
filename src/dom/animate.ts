@@ -15,11 +15,14 @@ export async function play(
   easing = "linear",
 ): Promise<void> {
   if (duration <= 0 || reducedMotion()) return;
+  // The lightbox listens for these to know when everything has settled.
+  element.dispatchEvent(new Event("dlbmove", { bubbles: true }));
   try {
     await element.animate(keyframes, { duration, easing }).finished;
   } catch {
     // Cancelled: whoever cancelled it has set the state.
   }
+  element.dispatchEvent(new Event("dlbsettle", { bubbles: true }));
 }
 
 /** Cancels the element's animations and returns its transform as it was on screen. */
