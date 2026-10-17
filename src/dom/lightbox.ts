@@ -253,6 +253,22 @@ export function lightbox(options: LightboxOptions): Lightbox {
     emit("close", slide.data);
   }
 
+  /** Moves to any slide: a neighbour with the slide animation, any other as a jump. */
+  function goTo(index: number): void {
+    if (!s || s.busy || s.closing || index === s.index || !s.slides[index]) return;
+    const forward = index === step(s.index, 1, s.slides.length, loop);
+    if (forward || index === step(s.index, -1, s.slides.length, loop)) {
+      change(s, forward ? 1 : -1, 0, changed);
+      return;
+    }
+    current(s).base = 1;
+    s.view = FIT_VIEW;
+    s.stripX = 0;
+    setSlots(s, index);
+    place(s);
+    changed();
+  }
+
   gallery.addEventListener(
     "click",
     (event) => {
@@ -281,6 +297,25 @@ export function lightbox(options: LightboxOptions): Lightbox {
     { signal: life.signal },
   );
 
+  // The hash changed on a page that is open already (a link to #dlb=<id>, or the address bar).
+  if (hist) {
+    addEventListener(
+      "hashchange",
+      () => {
+        const id = hashId();
+        if (id === null) {
+          if (s && !s.closing) void close(true);
+          return;
+        }
+        const index = readSlides(gallery, galleryId).findIndex((data) => data.id === id);
+        if (index < 0) return;
+        if (s) goTo(index);
+        else open(index, true);
+      },
+      { signal: life.signal },
+    );
+  }
+
   // A #dlb=<id> URL opens that slide. On the next frame, so the page can register its handlers first.
   const deepId = hist ? hashId() : null;
   if (deepId) {
@@ -294,21 +329,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
   return {
     open: (index = 0) => open(index),
     close: () => void close(),
-    goTo(index) {
-      if (!s || s.busy || s.closing || index === s.index || !s.slides[index]) return;
-      // A neighbour gets the slide animation; any other slide is a jump.
-      const forward = index === step(s.index, 1, s.slides.length, loop);
-      if (forward || index === step(s.index, -1, s.slides.length, loop)) {
-        change(s, forward ? 1 : -1, 0, changed);
-        return;
-      }
-      current(s).base = 1;
-      s.view = FIT_VIEW;
-      s.stripX = 0;
-      setSlots(s, index);
-      place(s);
-      changed();
-    },
+    goTo,
     next: () => go(1),
     prev: () => go(-1),
     get current() {

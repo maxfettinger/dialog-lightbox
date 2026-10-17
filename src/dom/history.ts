@@ -31,10 +31,20 @@ export function createHistory(onBack: () => void, signal: AbortSignal): HistoryL
   addEventListener(
     "popstate",
     () => {
-      // After close() went back itself, active is false and this popstate is ignored.
-      if (!active) return;
+      // After close() went back itself, active is false and this popstate is ignored. A popstate to another
+      // #dlb= hash is a hash navigation, which the lightbox handles on hashchange.
+      if (!active || location.hash.startsWith(PREFIX)) return;
       active = false;
       onBack();
+    },
+    { signal },
+  );
+  // A hash navigation while open adds its own entry: the one open() pushed is no longer right behind this one,
+  // so close() must not go back to it.
+  addEventListener(
+    "hashchange",
+    () => {
+      if (active) pushed = false;
     },
     { signal },
   );
