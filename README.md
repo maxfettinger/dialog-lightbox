@@ -221,6 +221,12 @@ dialog[data-dlb-loading]::after {
 }
 ```
 
+### Good to know
+
+- A CSS reset doesn't need undoing. Slide images, videos and their wrapper get `max-width: none` inline, so rules like `img { max-inline-size: 100% }` or `* { max-width: 100% }` don't stop the zoom.
+- The current slide holds two images: the thumbnail as a placeholder and, once it has loaded, the large image on top. In tests or CSS, `[data-dlb-current] img:last-of-type` is the large one.
+- A video always starts from its first frame, and until it plays the slide shows the thumbnail. Make the first frame the thumbnail, or the picture jumps when playback starts.
+
 ## Gestures and keys
 
 | | Mouse | Touch | Keys |
