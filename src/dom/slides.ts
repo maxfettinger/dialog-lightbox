@@ -20,16 +20,25 @@ export interface SlideEl {
 export const FILL =
   "position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;display:block";
 
-export function createSlide(data: SlideData): SlideEl {
+/** `overlay`: the page's template for this slide type, copied over the media. */
+export function createSlide(data: SlideData, overlay?: HTMLTemplateElement): SlideEl {
   const el = document.createElement("div");
   el.dataset.dlbSlide = "";
   el.style.cssText = "position:absolute;inset:0";
   const media = document.createElement("div");
-  media.style.cssText = "position:absolute;left:0;top:0;transform-origin:0 0";
+  // max-width:none: a zoomed wrapper is wider than the slide, whatever a page's CSS reset caps.
+  media.style.cssText = "position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;max-height:none";
   if (data.thumb) {
     // The thumbnail is loaded already, so it shows at once. For a video it is the poster.
     const alt = data.type === "video" ? data.thumb.alt : "";
     media.append(image(data.thumb.currentSrc || data.thumb.src, alt));
+  }
+  if (overlay) {
+    const copy = document.createElement("div");
+    copy.dataset.dlbOverlay = "";
+    copy.style.cssText = "position:absolute;inset:0;z-index:1";
+    copy.append(overlay.content.cloneNode(true));
+    media.append(copy);
   }
   el.append(media);
   return {

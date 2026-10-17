@@ -37,13 +37,18 @@ export interface Session {
   closing: boolean;
   /** Aborting it removes every listener of this session. */
   abort: AbortController;
+  /** The page's overlay templates per slide type. */
+  overlays: Overlays;
 }
+
+export type Overlays = Partial<Record<SlideData["type"], HTMLTemplateElement>>;
 
 export function createSession(
   slides: SlideData[],
   index: number,
   loop: boolean,
   viewport: HTMLElement,
+  overlays: Overlays,
 ): Session {
   const strip = document.createElement("div");
   strip.style.cssText = "position:absolute;inset:0";
@@ -52,7 +57,7 @@ export function createSession(
     slides,
     loop,
     index,
-    slots: [null, createSlide(slides[index]!), null],
+    slots: [null, createSlide(slides[index]!, overlays[slides[index]!.type]), null],
     strip,
     stripX: 0,
     view: FIT_VIEW,
@@ -67,6 +72,7 @@ export function createSession(
     busy: false,
     closing: false,
     abort: new AbortController(),
+    overlays,
   };
   setSlots(session, index);
   measure(session, viewport);
@@ -109,7 +115,7 @@ export const wrapperSize = (slide: SlideEl, f: Rect): Size => ({
 export function setSlots(s: Session, index: number): void {
   const old = s.slots.filter((slide): slide is SlideEl => slide !== null);
   const pick = (i: number): SlideEl =>
-    old.find((slide) => slide.data.index === i) ?? createSlide(s.slides[i]!);
+    old.find((slide) => slide.data.index === i) ?? createSlide(s.slides[i]!, s.overlays[s.slides[i]!.type]);
   const [prev, , next] = neighbours(index, s.slides.length, s.loop);
   s.index = index;
   s.slots = [prev === null ? null : pick(prev), pick(index), next === null ? null : pick(next)];
@@ -127,6 +133,7 @@ export function place(s: Session): void {
     slide.el.style.transform = `translateX(${(i - 1) * gap}px)`;
     slide.el.toggleAttribute("data-dlb-current", isCurrent);
     slide.el.setAttribute("aria-hidden", String(!isCurrent));
+    slide.el.inert = !isCurrent;
     const f = fitOf(s, slide);
     slide.media.style.visibility = f ? "" : "hidden";
     if (!f) continue;

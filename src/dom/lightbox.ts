@@ -7,7 +7,17 @@ import { createHistory, hashId } from "./history.js";
 import { readSlide, readSlides, type SlideData } from "./links.js";
 import { change } from "./navigate.js";
 import { bindPointer } from "./pointer.js";
-import { areaOf, createSession, current, fitOf, measure, place, type Session, setSlots } from "./session.js";
+import {
+  areaOf,
+  createSession,
+  current,
+  fitOf,
+  measure,
+  type Overlays,
+  place,
+  type Session,
+  setSlots,
+} from "./session.js";
 import { loadLarge, preload, type SlideEl } from "./slides.js";
 import { closeAnimation, openAnimation } from "./transitions.js";
 import { createVideo } from "./video.js";
@@ -53,7 +63,6 @@ export function lightbox(options: LightboxOptions): Lightbox {
   // The viewport takes focus on open, so keys reach the box and not the dialog's first button.
   viewport.tabIndex = -1;
   const galleryId = gallery.id || `g${++instances}`;
-  const controls = findControls(dialog);
   const life = new AbortController();
   const handlers: Record<LightboxEvent, Set<(slide: Slide) => void>> = {
     open: new Set(),
@@ -88,7 +97,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     const slide = current(s);
     const isVideo = slide.data.type === "video";
     const v = video.state;
-    render(dialog, controls, {
+    render(dialog, findControls(dialog), {
       type: slide.data.type,
       index: s.index,
       count: s.slides.length,
@@ -120,12 +129,20 @@ export function lightbox(options: LightboxOptions): Lightbox {
     sync();
   }
 
+  /** Starts the slide's video, with the progress bars in the dialog and in the slide's own overlay. */
+  function play(slide: SlideEl): void {
+    const bars = [...dialog.querySelectorAll<HTMLElement>("[data-dlb-progress]")].filter(
+      (bar) => !bar.closest("[data-dlb-slide]") || slide.el.contains(bar),
+    );
+    video.activate(slide.media, slide.data.src, bars);
+  }
+
   /** After the current slide changed: video, events, state, loading. */
   function changed(): void {
     if (!s) return;
     const slide = current(s);
     video.deactivate();
-    if (slide.data.type === "video") video.activate(slide.media, slide.data.src, controls.progress);
+    if (slide.data.type === "video") play(slide);
     hist?.change(slide.data.id);
     emit("change", slide.data);
     sync();
@@ -159,15 +176,23 @@ export function lightbox(options: LightboxOptions): Lightbox {
     if (s || dialog.open || life.signal.aborted) return;
     const slides = readSlides(gallery, galleryId);
     if (!slides[index]) return;
+    // Set before the slides exist, so an overlay starts hidden and fades in after the zoom.
+    dialog.toggleAttribute("data-dlb-animating", true);
     dialog.showModal();
     viewport.focus({ preventScroll: true });
-    const session = createSession(slides, index, loop, viewport);
+    const overlays: Overlays = {};
+    for (const template of dialog.querySelectorAll<HTMLTemplateElement>("template[data-dlb-overlay]")) {
+      const type = template.dataset.dlbOverlay;
+      if (type !== "video") overlays.image ??= template;
+      if (type !== "image") overlays.video ??= template;
+    }
+    const session = createSession(slides, index, loop, viewport, overlays);
     s = session;
     session.busy = true;
     bind(session);
     const slide = current(session);
     // Still inside the user's click, so iOS lets the video start.
-    if (slide.data.type === "video") video.activate(slide.media, slide.data.src, controls.progress);
+    if (slide.data.type === "video") play(slide);
     hist?.open(slide.data.id, deep);
     emit("open", slide.data);
     emit("change", slide.data);
@@ -175,21 +200,30 @@ export function lightbox(options: LightboxOptions): Lightbox {
     void loadAround(session);
     void openAnimation(session, dialog).then(() => {
       session.busy = false;
+      if (!session.closing) dialog.removeAttribute("data-dlb-animating");
     });
   }
 
   /** The session's listeners, all removed by session.abort.abort(). */
   function bind(session: Session): void {
     const { signal } = session.abort;
-    const click = (elements: HTMLElement[], action: () => void): void => {
-      for (const element of elements) element.addEventListener("click", action, { signal });
+    // One listener for the buttons, so copies in overlays work like the ones in the dialog.
+    const actions: Record<string, () => void> = {
+      close: () => void close(),
+      prev: () => go(-1),
+      next: () => go(1),
+      zoom: () => void toggleZoom(session, sync),
+      play: () => video.send({ type: "toggle" }),
+      mute: () => video.send({ type: "toggle-mute" }),
     };
-    click(controls.close, () => void close());
-    click(controls.prev, () => go(-1));
-    click(controls.next, () => go(1));
-    click(controls.zoom, () => void toggleZoom(session, sync));
-    click(controls.play, () => video.send({ type: "toggle" }));
-    click(controls.mute, () => video.send({ type: "toggle-mute" }));
+    dialog.addEventListener(
+      "click",
+      (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        for (const name in actions) if (target?.closest(`[data-dlb-${name}]`)) actions[name]!();
+      },
+      { signal },
+    );
     dialog.addEventListener("keydown", onKey, { signal });
     dialog.addEventListener(
       "cancel",
@@ -230,6 +264,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     const session = s;
     if (!session || session.closing) return;
     session.closing = true;
+    dialog.toggleAttribute("data-dlb-animating", true);
     if (!fromBack) hist?.close();
     video.pause();
     await closeAnimation(session, dialog);

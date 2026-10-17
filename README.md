@@ -149,8 +149,9 @@ Inside the dialog:
 | `[data-dlb-counter]` | Gets "3 / 16" |
 | `[data-dlb-play]`, `[data-dlb-mute]` | Video buttons with `aria-pressed` |
 | `[data-dlb-progress]` | Gets `--dlb-progress` from 0 to 1 while a video plays |
+| `<template data-dlb-overlay>` | Copied over the media of each slide as `<div data-dlb-overlay>`, which covers exactly the photo or video and moves, swipes and shrinks with it. `data-dlb-overlay="video"` or `"image"` limits it to one slide type, and you can have one template of each. The buttons and progress bars above work inside it too |
 
-State on the dialog, for your CSS: `data-dlb-type` (`image` or `video`), `data-dlb-first`, `data-dlb-last`, `data-dlb-loading`, `data-dlb-error`, `data-dlb-zoomable`, `data-dlb-zoomed`, `data-dlb-ui-hidden` (after a tap on a photo), `data-dlb-paused`, `data-dlb-muted` and `data-dlb-noaudio`. The current slide has `data-dlb-current`. `--dlb-opacity` goes from 0 to 1 while the box opens, and back while it closes or is dragged down.
+State on the dialog, for your CSS: `data-dlb-type` (`image` or `video`), `data-dlb-first`, `data-dlb-last`, `data-dlb-loading`, `data-dlb-error`, `data-dlb-zoomable`, `data-dlb-zoomed`, `data-dlb-ui-hidden` (after a tap on a photo), `data-dlb-paused`, `data-dlb-muted`, `data-dlb-noaudio`, and `data-dlb-animating` while the media zoom from or to the thumbnail or are dragged down. The current slide has `data-dlb-current`, so overlay copies in the neighbouring slides can look different, and the slides that aren't current are `inert`. The library's CSS fades an overlay out while the dialog is animating or zoomed. `--dlb-opacity` goes from 0 to 1 while the box opens, and back while it closes or is dragged down.
 
 ## CSS
 
@@ -220,6 +221,12 @@ dialog[data-dlb-loading]::after {
   }
 }
 ```
+
+### Good to know
+
+- A CSS reset doesn't need undoing. Slide images, videos and their wrapper get `max-width: none` inline, so rules like `img { max-inline-size: 100% }` or `* { max-width: 100% }` don't stop the zoom.
+- The current slide holds two images: the thumbnail as a placeholder and, once it has loaded, the large image on top. In tests or CSS, `[data-dlb-current] img:last-of-type` is the large one.
+- A video always starts from its first frame, and until it plays the slide shows the thumbnail. Make the first frame the thumbnail, or the picture jumps when playback starts.
 
 ## Gestures and keys
 

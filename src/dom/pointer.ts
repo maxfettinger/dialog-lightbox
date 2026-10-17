@@ -113,6 +113,7 @@ export function bindPointer(
         y: rubber(from.view.y + dy, b.minY, b.maxY, s.size.height),
       };
     } else if (f) {
+      dialog.toggleAttribute("data-dlb-animating", true);
       const progress = dismissProgress(dy, s.size.height);
       s.view = dismissView(f, dx, dy, progress);
       dialog.style.setProperty("--dlb-opacity", String(1 - progress));
@@ -136,6 +137,7 @@ export function bindPointer(
     } else if (shouldDismiss(dy, vy, s.size.height)) {
       hooks.close();
     } else {
+      dialog.removeAttribute("data-dlb-animating");
       springView(slide, f, FIT_VIEW, vx, vy);
       void backdrop(dialog, 1);
     }
@@ -187,6 +189,8 @@ export function bindPointer(
       return;
     }
     if (kind === "mouse" && event.button !== 0) return;
+    // A button or link in an overlay handles its own click.
+    if (event.target instanceof Element && event.target.closest("button, a, input, select, textarea")) return;
     try {
       viewport.setPointerCapture(event.pointerId);
     } catch {

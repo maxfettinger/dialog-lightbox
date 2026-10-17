@@ -41,4 +41,15 @@
     position: absolute;
     inset: 0;
   }
+
+  /* An overlay fades out while the media zoom from or to the thumbnail, are dragged down, or are zoomed. */
+  [data-dlb-overlay] {
+    transition: opacity 0.15s;
+  }
+
+  dialog[data-dlb-animating] [data-dlb-overlay],
+  dialog[data-dlb-zoomed] [data-dlb-overlay] {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
