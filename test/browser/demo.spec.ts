@@ -67,6 +67,20 @@ test("on a wide screen the docs list their chapters beside the text and mark the
   await expect(toc).toBeInViewport();
 });
 
+test("on a wide screen the examples list their sections beside the text and mark the one being read", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/examples/");
+  const toc = page.locator(".toc");
+  await expect(toc.locator("a")).toHaveCount(7);
+  const [list, title] = [await toc.boundingBox(), await page.locator("h1").boundingBox()];
+  expect(list!.x + list!.width).toBeLessThan(title!.x);
+  await toc.locator('a[href="#video"]').click();
+  await expect(toc.locator("a[aria-current]")).toHaveText("Video");
+  await expect(toc).toBeInViewport();
+});
+
 test("the docs page has its tables and labelled code", async ({ page }) => {
   const errors = noErrors(page);
   await page.goto("/docs/");
