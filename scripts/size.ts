@@ -1,4 +1,4 @@
-// The size budget: the script at most 12 kB minified and gzipped (Max raised it on 2026-10-18), the CSS at most 1 kB.
+// The size budget: the script at most 12 kB minified and gzipped, the CSS at most 1 kB.
 export {};
 
 const BUDGET = 12 * 1024;
