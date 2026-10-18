@@ -1,52 +1,37 @@
 {{ define "main" }}
   <section class="hero">
-    <h1>A lightbox on the native <code>&lt;dialog&gt;</code></h1>
+    <h1>dialog-lightbox</h1>
     <p class="lead">{{ .Params.lead }}</p>
-    <p class="hero-links">
-      <a class="button" href="#install">Install</a>
-      <a class="button button-quiet" href="{{ "docs/" | relURL }}">Read the docs</a>
-    </p>
+    <ul class="facts" role="list">
+      {{- with site.Data.lib }}<li>{{ div (float .gzip) 1000 | lang.FormatNumber 1 }} kB gzip</li>{{ end }}
+      <li>0 dependencies</li>
+      <li>TypeScript</li>
+      <li>MIT</li>
+      <li>Baseline 2024</li>
+    </ul>
+    {{ partial "code.html" (dict "file" "terminal" "lang" "sh" "code" "npm install dialog-lightbox") }}
   </section>
 
-  <section class="try" aria-labelledby="try">
-    <h2 id="try">Try it</h2>
-    <p>Tap a photo, swipe, drag down to close. Best on a phone.</p>
-    <ul class="try-gallery" role="list">
+  <section class="section" id="try">
+    <h2>Try it</h2>
+    <p>Click or tap a photo. Swipe or use the arrow keys, zoom with a click or double tap, close with a drag down, Escape or the back button.</p>
+    <ul class="try" role="list">
       {{- range .Params.try }}
         <li>
           <a href="{{ .src | relURL }}" data-dlb-width="{{ .width }}" data-dlb-height="{{ .height }}"{{ if .video }} data-dlb-type="video"{{ end }}>
-            <img src="{{ .thumb | relURL }}" alt="{{ .alt }}" loading="lazy" />
+            <img src="{{ .thumb | relURL }}" alt="{{ .alt }}" />
           </a>
         </li>
       {{- end }}
     </ul>
-    <dialog class="try-box" aria-label="Photo viewer">
-      <div data-dlb-viewport></div>
-      <div class="try-bar">
-        <span data-dlb-counter></span>
-        <button type="button" data-dlb-close aria-label="Close">×</button>
-      </div>
-    </dialog>
   </section>
 
   {{ .Content }}
 
-  <h2 id="examples">Examples</h2>
-  <p>Each example runs on its page, with its full code below, ready to copy.</p>
-  <ul class="cards" role="list">
-    {{- range (where site.RegularPages "Section" "examples").ByWeight }}
-      <li>
-        <a href="{{ .RelPermalink }}">
-          <strong>{{ .Title }}</strong>
-          <span>{{ .Params.lead }}</span>
-        </a>
-      </li>
-    {{- end }}
-  </ul>
-
+  {{ (resources.Get "examples/dialog/dialog.html").Content | safeHTML }}
   <script type="module">
     import { lightbox } from "{{ "lib/dialog-lightbox.js" | relURL }}";
 
-    lightbox({ gallery: document.querySelector(".try-gallery"), dialog: document.querySelector(".try-box") });
+    lightbox({ gallery: document.querySelector(".try"), dialog: document.querySelector("dialog.box") });
   </script>
 {{ end }}

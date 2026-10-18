@@ -1,0 +1,9 @@
+{{- /* A code block with its file name or language above it and a copy button.
+       Takes dict "code" (text), "lang" (for highlighting) and "file" (label; the language if empty). */ -}}
+<figure class="code">
+  <figcaption>
+    <span>{{ .file | default .lang }}</span>
+    <button type="button" class="code-copy">Copy</button>
+  </figcaption>
+  {{ transform.Highlight (strings.TrimSpace .code) .lang }}
+</figure>

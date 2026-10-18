@@ -5,26 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
     <meta name="description" content="{{ .Description | default site.Params.description }}" />
-    {{- with resources.Get "css/site.css" | minify | fingerprint }}
+    {{- /* The site's CSS, the shared dialog of the examples, and each example's own CSS, in one file */}}
+    {{- $css := slice (resources.Get "css/site.css") (resources.Get "examples/dialog/dialog.css") }}
+    {{- range resources.Match "examples/*/style.css" }}{{ $css = $css | append . }}{{ end }}
+    {{- with $css | resources.Concat "css/site.css" | minify | fingerprint }}
     <link rel="stylesheet" href="{{ .RelPermalink }}" />
     {{- end }}
     <link rel="stylesheet" href="{{ "lib/dialog-lightbox.css" | relURL }}" />
-    {{- block "head" . }}{{ end }}
   </head>
   <body>
     <header class="header">
       <a class="brand" href="{{ "" | relURL }}">dialog-lightbox</a>
+      {{- with site.Data.lib }}<span class="tag">v{{ .version }}</span>{{ end }}
       <nav>
-        <a href="{{ "" | relURL }}#examples">Examples</a>
-        <a href="{{ "docs/" | relURL }}">Docs</a>
+        <a href="{{ "examples/" | relURL }}"{{ if eq .Type "examples" }} aria-current="page"{{ end }}>Examples</a>
+        <a href="{{ "docs/" | relURL }}"{{ if eq .RelPermalink "/docs/" }} aria-current="page"{{ end }}>Docs</a>
         <a href="{{ site.Params.repo }}">GitHub</a>
+        <a href="https://www.npmjs.com/package/dialog-lightbox">npm</a>
       </nav>
     </header>
     <main class="main">
       {{- block "main" . }}{{ end }}
     </main>
     <footer class="footer">
-      <p>MIT licensed · <a href="{{ site.Params.repo }}">GitHub</a> · <a href="https://www.npmjs.com/package/dialog-lightbox">npm</a> · Photos and videos from Wikimedia Commons, see the <a href="{{ site.Params.repo }}/blob/main/demo/CREDITS.md">credits</a></p>
+      <p>MIT · Photos and videos from Wikimedia Commons, see the <a href="{{ site.Params.repo }}/blob/main/demo/CREDITS.md">credits</a></p>
     </footer>
+    <script>
+      for (const button of document.querySelectorAll(".code-copy")) {
+        button.addEventListener("click", async () => {
+          await navigator.clipboard.writeText(button.closest(".code").querySelector("pre").textContent);
+          button.textContent = "Copied";
+          setTimeout(() => (button.textContent = "Copy"), 1500);
+        });
+      }
+    </script>
   </body>
 </html>

@@ -10,7 +10,7 @@ The library finds the parts of your page by their `data-dlb-*` attributes, adds 
 
 Every `<a href>` inside the gallery is a slide, in order. Its first `<img>` is the thumbnail, which has to show the whole photo. Crop it with `object-fit: cover` if you want frames; the box then opens by zooming out of the frame.
 
-```html
+```html {file="index.html"}
 <a href="ferry-1600.webp" data-dlb-width="1600" data-dlb-height="1067"
    data-dlb-srcset="ferry-1080.webp 1080w, ferry-1600.webp 1600w">
   <img src="ferry-480.webp" alt="The ferry at Kiel" />
@@ -30,7 +30,7 @@ Every `<a href>` inside the gallery is a slide, in order. Its first `<img>` is t
 
 One `<dialog>` serves every gallery on a page. Only the viewport is required; leave out any part you don't need, and gestures and keys still work.
 
-```html
+```html {file="index.html"}
 <dialog aria-label="Photo viewer">
   <div data-dlb-viewport></div>
   <span data-dlb-counter></span>
@@ -61,7 +61,7 @@ Buttons and progress bars work in the dialog and inside an overlay alike.
 
 ## JavaScript
 
-```js
+```js {file="script.js"}
 import { lightbox } from "dialog-lightbox";
 
 const box = lightbox({ gallery, dialog, loop: false, history: true });
@@ -111,7 +111,7 @@ On the dialog:
 
 The current slide has `data-dlb-current`, and the others are `inert`.
 
-```css
+```css {file="style.css"}
 dialog[data-dlb]::backdrop {
   background: rgb(0 0 0 / var(--dlb-opacity));
 }
@@ -140,4 +140,4 @@ dialog:not([data-dlb-type="video"]) .video-bar {
 - Overlay copies are `div[data-dlb-overlay]`; the template has the attribute too.
 - Browsers: Safari 17.4, Chrome and Edge 122, Firefox 132 and later (Baseline 2024).
 
-The [README](https://github.com/maxfettinger/dialog-lightbox#readme) has the same reference, plus a comparison with other lightboxes.
+The [examples](../examples/) show these parts at work. The [README](https://github.com/maxfettinger/dialog-lightbox#readme) has the same reference, plus a comparison with other lightboxes.

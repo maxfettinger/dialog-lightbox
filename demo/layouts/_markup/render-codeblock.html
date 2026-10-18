@@ -1,0 +1,2 @@
+{{- /* Fenced code in Markdown: ```html {file="index.html"} gets that label, plain ```html gets "html" */ -}}
+{{ partial "code.html" (dict "code" .Inner "lang" (.Type | default "text") "file" .Attributes.file) }}

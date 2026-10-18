@@ -2,7 +2,7 @@
 
 A lightweight lightbox on the native `<dialog>`: swipe, zoom, video. It adds behavior; the markup and CSS stay yours.
 
-Try it on the [demo site](https://dialog-lightbox.maxfettinger.com), ideally on a phone. It has three examples with their full code and short docs.
+Try it on the [demo site](https://dialog-lightbox.maxfettinger.com), ideally on a phone. It has an example for each feature, live with its code, and short docs.
 
 The script is about 9.5 kB gzipped and has no dependencies. You write the dialog, its buttons and every style yourself. The library finds the parts by their `data-dlb-*` attributes, adds the behavior, and reports its state as attributes your CSS can use.
 

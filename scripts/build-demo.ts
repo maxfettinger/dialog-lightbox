@@ -7,6 +7,12 @@ import { $ } from "bun";
 await mkdir("demo/static/lib", { recursive: true });
 await cp("src/dialog-lightbox.css", "demo/static/lib/dialog-lightbox.css");
 
+// The version and the gzipped size of the minified build, for the site's header and start page
+if (!(await Bun.file("dist/dialog-lightbox.js").exists())) await $`bun run build`.quiet();
+const gzip = Bun.gzipSync(await Bun.file("dist/dialog-lightbox.js").bytes()).length;
+const { version } = await Bun.file("package.json").json();
+await Bun.write("demo/data/lib.json", `${JSON.stringify({ version, gzip })}\n`);
+
 if (process.argv.includes("--serve")) {
   const lib = ["build", "./src/index.ts", "--target=browser", "--outfile=demo/static/lib/dialog-lightbox.js"];
   await $`bun ${lib}`.quiet();
