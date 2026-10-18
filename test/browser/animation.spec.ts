@@ -10,7 +10,7 @@ const settled = (page: Page): Promise<unknown> =>
     return media !== null && media.getAnimations().length === 0;
   });
 
-test("opening zooms out of the thumbnail, which hides meanwhile", async ({ fixture: page }) => {
+test("opening zooms out of the thumbnail, which stays visible", async ({ fixture: page }) => {
   const state = await page.evaluate(() => {
     const link = document.querySelector<HTMLAnchorElement>("#one a")!;
     link.click();
@@ -26,7 +26,7 @@ test("opening zooms out of the thumbnail, which hides meanwhile", async ({ fixtu
   expect(state.animations).toBe(1);
   // wide-thumb.svg is 4:1 in a 3:2 box with object-fit: cover, so the zoom starts clipped at the sides.
   expect(state.clipStart).toMatch(/^inset\(0px [1-9]/);
-  expect(state.thumb).toBe("hidden");
+  expect(state.thumb).toBe("visible");
   await settled(page);
   await expect(page.locator("#one a img").first()).toHaveCSS("visibility", "visible");
 });
