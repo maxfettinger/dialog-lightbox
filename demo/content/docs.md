@@ -135,6 +135,7 @@ dialog:not([data-dlb-type="video"]) .video-bar {
 
 - A CSS reset doesn't need undoing: the slide's media get `max-width: none` inline.
 - The current slide holds two images, the thumbnail and the large one on top. `[data-dlb-current] img:last-of-type` is the large one.
+- iOS draws a grey box where a tap lands. The library's CSS turns it off inside the dialog; for the thumbnails, add `-webkit-tap-highlight-color: transparent` to your gallery links.
 - Overlay copies are `div[data-dlb-overlay]`; the template has the attribute too.
 - Browsers: Safari 17.4, Chrome and Edge 122, Firefox 132 and later (Baseline 2024).
 

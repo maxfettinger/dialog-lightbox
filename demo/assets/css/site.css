@@ -27,6 +27,11 @@
   }
 }
 
+/* No grey box on iOS where a tap lands, on the thumbnails and everywhere else */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   margin: 0;
   background: var(--bg);
