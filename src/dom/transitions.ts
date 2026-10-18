@@ -30,7 +30,6 @@ export async function zoomBox(s: Session, dialog: HTMLElement, open: boolean): P
   const [a, b] = open ? [box, now] : [now, box];
   media.style.transform = placeAt(b.rect, size);
   media.style.clipPath = clipAt(b.clip, b.rect, size);
-  thumb.style.visibility = "hidden";
   await Promise.all([
     glide(
       media,
@@ -42,7 +41,6 @@ export async function zoomBox(s: Session, dialog: HTMLElement, open: boolean): P
     ),
     fade,
   ]);
-  thumb.style.visibility = "";
 }
 
 /** Animates --dlb-opacity on the dialog to `to`, from `from` or from its current value. */
