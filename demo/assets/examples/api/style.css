@@ -1,0 +1,9 @@
+.log {
+  min-height: 6.5em;
+  max-height: 10em;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e4e7ec;
+  font-size: 0.8rem;
+}

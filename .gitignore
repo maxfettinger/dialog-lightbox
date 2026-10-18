@@ -21,4 +21,5 @@ site/
 demo/static/lib/
 demo/resources/
 demo/public/
+demo/data/
 demo/.hugo_build.lock

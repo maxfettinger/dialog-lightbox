@@ -1,34 +1,41 @@
-{{- /* An example: the files in assets/examples/<name>/ run on the page and are shown, highlighted, below it.
-       The code on screen loads the released library from the CDN; the page runs the local build in /lib/. */ -}}
-
-{{ define "head" }}
-  {{- with resources.Get (printf "examples/%s/style.css" .File.ContentBaseName) }}
-    <style>{{ .Content | safeCSS }}</style>
-  {{- end }}
-{{ end }}
-
+{{- /* The examples page: one shared dialog, then a section per example. Each example is a folder in
+       assets/examples/: example.html, and optionally style.css (bundled into the site's CSS) and script.js. The
+       files run on the page and are shown below, the script importing "dialog-lightbox" as from npm. */ -}}
 {{ define "main" }}
-  {{- $dir := printf "examples/%s/" .File.ContentBaseName }}
-  {{- $html := resources.Get (print $dir "example.html") }}
-  {{- $css := resources.Get (print $dir "style.css") }}
-  {{- $js := resources.Get (print $dir "script.js") }}
-  {{- $cdn := site.Params.cdn }}
   <h1>{{ .Title }}</h1>
   <p class="lead">{{ .Params.lead }}</p>
+  <nav class="toc" aria-label="On this page">
+    <ul>
+      <li><a href="#dialog">The dialog</a></li>
+      {{- range .Params.examples }}<li><a href="#{{ .name }}">{{ .title }}</a></li>{{ end }}
+    </ul>
+  </nav>
   {{ .Content }}
-  <div class="example{{ if .Params.wide }} example-wide{{ end }}">
-    {{ $html.Content | safeHTML }}
-  </div>
-  <h2>HTML</h2>
-  {{ transform.Highlight (printf "<link rel=\"stylesheet\" href=\"%sdialog-lightbox.css\" />\n\n%s" $cdn $html.Content) "html" }}
-  {{- with $css }}
-    <h2>CSS</h2>
-    {{ transform.Highlight .Content "css" }}
+
+  <section class="section" id="dialog">
+    <h2>The dialog</h2>
+    <p>One dialog serves every gallery on a page, and every example here shares this one. Only the viewport is required; the library finds the other parts by their attributes and disables buttons that can't act.</p>
+    {{ partial "code.html" (dict "file" "index.html" "lang" "html" "code" (resources.Get "examples/dialog/dialog.html").Content) }}
+    {{ partial "code.html" (dict "file" "style.css" "lang" "css" "code" (resources.Get "examples/dialog/dialog.css").Content) }}
+  </section>
+
+  {{- range .Params.examples }}
+    {{- $dir := printf "examples/%s/" .name }}
+    {{- $html := resources.Get (print $dir "example.html") }}
+    {{- $css := resources.Get (print $dir "style.css") }}
+    {{- $js := resources.Get (print $dir "script.js") }}
+    <section class="section" id="{{ .name }}">
+      <h2>{{ .title }}</h2>
+      {{ .text | markdownify }}
+      <div class="demo">{{ $html.Content | safeHTML }}</div>
+      {{ partial "code.html" (dict "file" "index.html" "lang" "html" "code" $html.Content) }}
+      {{- with $css }}{{ partial "code.html" (dict "file" "style.css" "lang" "css" "code" .Content) }}{{ end }}
+      {{- with $js }}
+        {{ partial "code.html" (dict "file" "script.js" "lang" "js" "code" (replace .Content "/lib/dialog-lightbox.js" "dialog-lightbox")) }}
+        <script type="module">{{ .Content | safeJS }}</script>
+      {{- end }}
+    </section>
   {{- end }}
-  <h2>JavaScript</h2>
-  {{ transform.Highlight (replace $js.Content "/lib/" $cdn) "js" }}
-  {{- with .Params.next }}
-    <p class="next">Next: <a href="{{ (site.GetPage .).RelPermalink }}">{{ (site.GetPage .).Title }}</a></p>
-  {{- end }}
-  <script type="module">{{ $js.Content | safeJS }}</script>
+
+  {{ (resources.Get "examples/dialog/dialog.html").Content | safeHTML }}
 {{ end }}

@@ -1,31 +1,62 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
-// The demo site as Hugo builds it: every page loads without errors, the examples open, and their code is shown.
-for (const [path, gallery] of [
-  ["/", ".try-gallery"],
-  ["/examples/minimal/", ".gallery"],
-  ["/examples/basic/", ".gallery"],
-  ["/examples/film/", ".film"],
-] as const) {
-  test(`demo page ${path} works`, async ({ page }) => {
-    const errors: string[] = [];
-    page.on("pageerror", (error) => errors.push(error.message));
-    await page.goto(path);
-    await page.locator(`${gallery} a`).first().click();
-    await expect(page.locator("dialog")).toHaveAttribute("open", "");
+// The demo site as Hugo builds it (the web server builds it first). Every page loads without errors, every
+// example's gallery opens in the shared dialog, and the code blocks carry their file names.
+
+const noErrors = (page: Page): string[] => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  return errors;
+};
+
+test("the start page's gallery opens", async ({ page }) => {
+  const errors = noErrors(page);
+  await page.goto("/");
+  await page.locator(".try a").first().click();
+  await expect(page.locator("dialog.box")).toHaveAttribute("open", "");
+  expect(errors).toEqual([]);
+});
+
+for (const gallery of ["frames", "large", "captioned", "clips", "norway", "controlled"]) {
+  test(`the ${gallery} example opens`, async ({ page }) => {
+    const errors = noErrors(page);
+    await page.goto("/examples/");
+    await page.locator(`#${gallery} a`).first().click();
+    await expect(page.locator("dialog.box")).toHaveAttribute("open", "");
     expect(errors).toEqual([]);
   });
 }
 
-test("the docs page has its tables and highlighted code", async ({ page }) => {
-  await page.goto("/docs/");
-  await expect(page.locator("table").first()).toBeVisible();
-  await expect(page.locator("pre.chroma").first()).toBeVisible();
+test("the captions example writes the figure's caption", async ({ page }) => {
+  await page.goto("/examples/");
+  await page.locator("#captioned a").first().click();
+  await expect(page.locator(".box-caption")).toHaveText(/Bodø/);
 });
 
-test("the example code loads the released files from jsDelivr", async ({ page }) => {
-  await page.goto("/examples/basic/");
-  await expect(page.locator("pre.chroma").last()).toContainText(
-    "https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.js",
-  );
+test("a #dlb= link in the text opens its slide", async ({ page }) => {
+  await page.goto("/examples/");
+  await page.locator('a[href="#dlb=north-cape"]').click();
+  await expect(page.locator("dialog.box")).toHaveAttribute("open", "");
+  await expect(page.locator("[data-dlb-counter]")).toHaveText("2 / 2");
+});
+
+test("the API example opens the last photo and logs the events", async ({ page }) => {
+  await page.goto("/examples/");
+  await page.locator(".open-last").click();
+  await expect(page.locator("[data-dlb-counter]")).toHaveText("3 / 3");
+  await expect(page.locator(".log")).toContainText("open   slide 3 of 3");
+});
+
+test("code blocks are labelled and import the package by name", async ({ page }) => {
+  await page.goto("/examples/");
+  await expect(page.locator(".code figcaption span").first()).toHaveText("index.html");
+  await expect(page.locator("#cropped .code pre").last()).toContainText('from "dialog-lightbox"');
+});
+
+test("the docs page has its tables and labelled code", async ({ page }) => {
+  const errors = noErrors(page);
+  await page.goto("/docs/");
+  await expect(page.locator("table").first()).toBeVisible();
+  await expect(page.locator(".code figcaption span").first()).toHaveText("index.html");
+  expect(errors).toEqual([]);
 });
