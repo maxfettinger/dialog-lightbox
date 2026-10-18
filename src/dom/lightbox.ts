@@ -70,6 +70,8 @@ export function lightbox(options: LightboxOptions): Lightbox {
     close: new Set(),
   };
   let s: Session | null = null;
+  /** Moves asked for during the opening animation, made once it ends. */
+  const queue: (() => void)[] = [];
   const video = createVideo(() => sync(), life.signal);
   // A video without a known size is sized from its own metadata.
   video.element.addEventListener(
@@ -165,7 +167,9 @@ export function lightbox(options: LightboxOptions): Lightbox {
   }
 
   function go(direction: -1 | 1): void {
-    if (s && !s.busy && !s.closing) change(s, direction, 0, changed);
+    if (!s || s.closing) return;
+    if (s.busy) queue.push(() => go(direction));
+    else change(s, direction, 0, changed);
   }
 
   function onKey(event: KeyboardEvent): void {
@@ -201,6 +205,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
       if (type !== "video") overlays.image ??= template;
       if (type !== "image") overlays.video ??= template;
     }
+    queue.length = 0;
     const session = createSession(slides, index, loop, viewport, overlays);
     s = session;
     session.busy = true;
@@ -215,7 +220,9 @@ export function lightbox(options: LightboxOptions): Lightbox {
     void loadAround(session);
     void openAnimation(session, dialog).then(() => {
       session.busy = false;
-      if (!session.closing) dialog.removeAttribute("data-dlb-animating");
+      if (session.closing) return;
+      dialog.removeAttribute("data-dlb-animating");
+      for (const move of queue.splice(0)) move();
     });
   }
 
@@ -313,7 +320,12 @@ export function lightbox(options: LightboxOptions): Lightbox {
 
   /** Moves to any slide: a neighbour with the slide animation, any other as a jump. */
   function goTo(index: number): void {
-    if (!s || s.busy || s.closing || index === s.index || !s.slides[index]) return;
+    if (!s || s.closing || !s.slides[index]) return;
+    if (s.busy) {
+      queue.push(() => goTo(index));
+      return;
+    }
+    if (index === s.index) return;
     const forward = index === step(s.index, 1, s.slides.length, loop);
     if (forward || index === step(s.index, -1, s.slides.length, loop)) {
       change(s, forward ? 1 : -1, 0, changed);
