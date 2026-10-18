@@ -3,7 +3,7 @@
     <h1>dialog-lightbox</h1>
     <p class="lead">{{ .Params.lead }}</p>
     <ul class="facts" role="list">
-      {{- with site.Data.lib }}<li>{{ div (float .gzip) 1000 | lang.FormatNumber 1 }} kB gzip</li>{{ end }}
+      {{- with hugo.Data.lib }}<li>{{ div (float .gzip) 1000 | lang.FormatNumber 1 }} kB gzip</li>{{ end }}
       <li>0 dependencies</li>
       <li>TypeScript</li>
       <li>MIT</li>
