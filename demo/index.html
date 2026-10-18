@@ -2,129 +2,130 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>dialog-lightbox demo</title>
-    <link rel="stylesheet" href="../src/dialog-lightbox.css" />
-    <link rel="stylesheet" href="./demo.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>dialog-lightbox</title>
+    <meta name="description" content="A small, typed lightbox on the native dialog element: swipe, zoom, video." />
+    <link rel="stylesheet" href="site.css" />
+    <link rel="stylesheet" href="lib/dialog-lightbox.css" />
+    <style>
+      .try {
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+        padding: 0;
+        list-style: none;
+      }
+
+      .try img {
+        display: block;
+        width: auto;
+        height: 7rem;
+        border-radius: 0.25rem;
+      }
+
+      .try-box {
+        background: transparent;
+        color: white;
+      }
+
+      .try-box::backdrop {
+        background: rgb(0 0 0 / calc(var(--dlb-opacity) * 0.92));
+      }
+
+      .try-box [data-dlb-viewport] {
+        padding: 3rem 0;
+      }
+
+      .try-box .try-bar {
+        position: absolute;
+        inset: 0 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        font-family: system-ui, sans-serif;
+      }
+
+      .try-box button {
+        border: 0;
+        background: none;
+        color: inherit;
+        font-size: 1.75rem;
+        cursor: pointer;
+      }
+    </style>
   </head>
   <body>
-    <main>
-      <h1>dialog-lightbox</h1>
-      <p>
-        Tap a frame. Swipe between photos, double-tap or click to zoom, drag down to close. Videos play
-        muted; the speaker turns the sound on.
-      </p>
+    <header class="site-header">
+      <a class="site-name" href="./">dialog-lightbox</a>
+      <nav><a href="#examples">Examples</a> <a href="docs.html">Docs</a> <a href="https://github.com/maxfettinger/dialog-lightbox">GitHub</a></nav>
+    </header>
+    <main class="site-main">
+      <h1>A lightbox on the native <code>&lt;dialog&gt;</code></h1>
+      <p class="site-lead">Swipe, zoom and video for the photos you link to, in about 9.5 kB with no dependencies. It adds the behaviour; the markup and the look stay yours.</p>
 
-      <h2>With srcset</h2>
-      <div class="film">
-        <ul class="frames" id="one" role="list">
-          <li>
-            <figure>
-              <a href="media/photo-1-1600.jpg" data-dlb-srcset="media/photo-1-1080.jpg 1080w, media/photo-1-1600.jpg 1600w">
-                <img src="media/photo-1-480.jpg" alt="Blue, orange and green color field" loading="lazy" />
-              </a>
-              <figcaption>Photo 1 · Generated</figcaption>
-            </figure>
-          </li>
-          <li>
-            <figure>
-              <a href="media/photo-2-1600.jpg" data-dlb-srcset="media/photo-2-1080.jpg 1080w, media/photo-2-1600.jpg 1600w">
-                <img src="media/photo-2-480.jpg" alt="Teal and orange color field" loading="lazy" />
-              </a>
-              <figcaption>Photo 2 · Generated</figcaption>
-            </figure>
-          </li>
-          <li>
-            <figure>
-              <a href="media/photo-4-1600.jpg" data-dlb-srcset="media/photo-4-1080.jpg 720w, media/photo-4-1600.jpg 1066w">
-                <img src="media/photo-4-480.jpg" alt="Dark red and amber color field, portrait" loading="lazy" />
-              </a>
-              <figcaption>Photo 4 · Generated</figcaption>
-            </figure>
-          </li>
-          <li>
-            <figure>
-              <a href="media/clip-1.mp4" data-dlb-type="video" data-dlb-width="720" data-dlb-height="1280">
-                <img src="media/clip-1-480.jpg" alt="A slow teal color animation with a soft tone" loading="lazy" />
-              </a>
-              <figcaption>Clip 1 · With sound</figcaption>
-            </figure>
-          </li>
-          <li>
-            <figure>
-              <a href="media/photo-3-1600.jpg" data-dlb-srcset="media/photo-3-1080.jpg 1080w, media/photo-3-1600.jpg 1600w">
-                <img src="media/photo-3-480.jpg" alt="Deep blue and pale cyan color field" loading="lazy" />
-              </a>
-              <figcaption>Photo 3 · Generated</figcaption>
-            </figure>
-          </li>
-        </ul>
-      </div>
+      <p>Try it, ideally on a phone: tap a photo, swipe, drag down to close.</p>
+      <ul class="try" role="list">
+        <li><a href="media/boat-1600.webp" data-dlb-width="1600" data-dlb-height="1067"><img src="media/boat-480.webp" width="480" height="320" alt="A small boat on still water in front of autumn mountains" /></a></li>
+        <li><a href="media/northcape-1600.webp" data-dlb-width="1084" data-dlb-height="1600"><img src="media/northcape-480.webp" width="480" height="708" alt="The globe monument on the cliff of the North Cape above the sea" /></a></li>
+        <li><a href="media/waves.mp4" data-dlb-type="video" data-dlb-width="960" data-dlb-height="540"><img src="media/waves-480.webp" width="480" height="270" alt="Waves breaking on a rocky shore" /></a></li>
+        <li><a href="media/aurora-3200.webp" data-dlb-width="3200" data-dlb-height="880"><img src="media/aurora-720.webp" width="720" height="198" alt="Northern lights over a fjord and snowy mountains at night" /></a></li>
+      </ul>
+      <dialog class="try-box" aria-label="Photo viewer">
+        <div data-dlb-viewport></div>
+        <div class="try-bar"><span data-dlb-counter></span><button type="button" data-dlb-close aria-label="Close">×</button></div>
+      </dialog>
 
-      <h2>Without sizes</h2>
-      <div class="film">
-        <ul class="frames" id="two" role="list">
-          <li>
-            <figure>
-              <a href="media/photo-5-1600.jpg">
-                <img src="media/photo-5-480.jpg" alt="Green color field, portrait" loading="lazy" />
-              </a>
-              <figcaption>Photo 5 · No sizes given</figcaption>
-            </figure>
-          </li>
-          <li>
-            <figure>
-              <a href="media/photo-6-3200.jpg">
-                <img src="media/photo-6-720.jpg" alt="Very wide purple and orange panorama" loading="lazy" />
-              </a>
-              <figcaption>Panorama · Zoom in</figcaption>
-            </figure>
-          </li>
-          <li>
-            <figure>
-              <a href="media/clip-2.mp4" data-dlb-type="video" data-dlb-noaudio>
-                <img src="media/clip-2-480.jpg" alt="A slow purple and orange color animation, silent" loading="lazy" />
-              </a>
-              <figcaption>Clip 2 · No audio</figcaption>
-            </figure>
-          </li>
-        </ul>
-      </div>
+      <ul>
+        <li>Opens with a zoom out of the thumbnail, also when CSS crops it.</li>
+        <li>Swipe between photos, drag down to close, click or double-tap to zoom, drag to pan.</li>
+        <li>Plays short videos muted and inline, with your own play, sound and fullscreen buttons.</li>
+        <li>The back button closes it, and a <code>#dlb=&lt;id&gt;</code> link opens a photo.</li>
+        <li>A real modal dialog: focus stays inside, Escape closes, and the page behind is inert.</li>
+      </ul>
+
+      <h2 id="examples">Examples</h2>
+      <p>Each example shows its full code below it, ready to copy.</p>
+      <ul class="site-cards" role="list">
+        <li><a href="examples/minimal.html"><strong>Minimal</strong><span>Links, a dialog and one call. No styles beyond the library's own.</span></a></li>
+        <li><a href="examples/basic.html"><strong>Sensible</strong><span>Square thumbnails, a dark box, buttons, a caption, video controls.</span></a></li>
+        <li><a href="examples/film.html"><strong>Film strip</strong><span>Photos on 35mm film, with the video controls inside the video.</span></a></li>
+      </ul>
+
+      <h2>Install</h2>
+      <pre><code>npm install dialog-lightbox</code></pre>
+      <p>Or without npm, straight from a CDN in a plain HTML page:</p>
+      <pre><code>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.css" /&gt;
+&lt;script type="module"&gt;
+  import { lightbox } from "https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.js";
+
+  lightbox({ gallery: document.querySelector(".gallery"), dialog: document.querySelector("dialog") });
+&lt;/script&gt;</code></pre>
+
+      <h2>Quick start</h2>
+      <p>Each thumbnail links to its large file, so the page works without JavaScript too. One dialog with a viewport serves every gallery on the page.</p>
+      <pre><code>&lt;div class="gallery"&gt;
+  &lt;a href="ferry-1600.webp"&gt;&lt;img src="ferry-480.webp" alt="The ferry at Kiel" /&gt;&lt;/a&gt;
+  &lt;a href="ride.mp4" data-dlb-type="video"&gt;&lt;img src="ride-poster.webp" alt="Riding to the ferry" /&gt;&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;dialog aria-label="Photo viewer"&gt;
+  &lt;div data-dlb-viewport&gt;&lt;/div&gt;
+  &lt;button type="button" data-dlb-close aria-label="Close"&gt;×&lt;/button&gt;
+&lt;/dialog&gt;</code></pre>
+      <pre><code>import { lightbox } from "dialog-lightbox";
+import "dialog-lightbox/dialog-lightbox.css";
+
+lightbox({ gallery: document.querySelector(".gallery"), dialog: document.querySelector("dialog") });</code></pre>
+      <p>Then add the buttons and styles you want. The <a href="docs.html">docs</a> list every attribute, option and state.</p>
     </main>
+    <footer class="site-footer">
+      <p>MIT licensed. <a href="https://github.com/maxfettinger/dialog-lightbox">GitHub</a> · <a href="https://www.npmjs.com/package/dialog-lightbox">npm</a> · Photos from Wikimedia Commons, see <a href="https://github.com/maxfettinger/dialog-lightbox/blob/main/demo/CREDITS.md">credits</a>.</p>
+    </footer>
+    <script type="module">
+      import { lightbox } from "./lib/dialog-lightbox.js";
 
-    <dialog aria-label="Photo viewer">
-      <div data-dlb-viewport></div>
-      <div class="box-bar box-top">
-        <span data-dlb-counter></span>
-        <button type="button" data-dlb-zoom aria-label="Zoom">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-5-5M11 8v6M8 11h6" /></svg>
-        </button>
-        <button type="button" data-dlb-close aria-label="Close">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
-        </button>
-      </div>
-      <button type="button" class="box-side" data-dlb-prev aria-label="Previous">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
-      </button>
-      <button type="button" class="box-side" data-dlb-next aria-label="Next">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
-      </button>
-      <div class="box-bar box-bottom">
-        <div class="video-bar">
-          <button type="button" data-dlb-play aria-label="Play">
-            <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 4 13 8-13 8V4z" /></svg>
-            <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h3v16H7zM14 4h3v16h-3z" /></svg>
-          </button>
-          <span data-dlb-progress></span>
-          <button type="button" data-dlb-mute aria-label="Sound">
-            <svg class="icon-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5zM22 9l-6 6M16 9l6 6" /></svg>
-            <svg class="icon-sound" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5zM19 5a10 10 0 0 1 0 14M15.5 8.5a5 5 0 0 1 0 7" /></svg>
-          </button>
-        </div>
-        <p class="caption"></p>
-      </div>
-    </dialog>
-
-    <script type="module" src="./demo.ts"></script>
+      lightbox({ gallery: document.querySelector(".try"), dialog: document.querySelector(".try-box") });
+    </script>
   </body>
 </html>

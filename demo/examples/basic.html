@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sensible example · dialog-lightbox</title>
+    <link rel="stylesheet" href="../site.css" />
+    <!-- head -->
+    <link rel="stylesheet" href="../lib/dialog-lightbox.css" />
+    <!-- /head -->
+    <style data-example>
+      /* Square thumbnails; the box still opens from them, uncropped */
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+        gap: 0.5rem;
+        padding: 0;
+        list-style: none;
+      }
+
+      .gallery img {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+        object-fit: cover;
+      }
+
+      /* The box: white on black, fading in with the photo */
+      .box {
+        background: transparent;
+        color: white;
+      }
+
+      .box::backdrop {
+        background: rgb(0 0 0 / calc(var(--dlb-opacity) * 0.92));
+      }
+
+      /* Room above for the counter and buttons, below for the caption */
+      .box [data-dlb-viewport] {
+        padding: 3rem 0 4rem;
+      }
+
+      .box-top,
+      .box-bottom {
+        position: absolute;
+        inset-inline: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        transition: opacity 0.2s;
+      }
+
+      .box-top {
+        top: 0;
+      }
+
+      .box-bottom {
+        bottom: 0;
+        flex-direction: column;
+      }
+
+      [data-dlb-counter] {
+        margin-right: auto;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .box button {
+        min-width: 2.5rem;
+        height: 2.5rem;
+        padding: 0 0.5rem;
+        border: 0;
+        border-radius: 1.25rem;
+        background: rgb(255 255 255 / 0.15);
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .box button:disabled {
+        opacity: 0.3;
+        cursor: default;
+      }
+
+      .box-side {
+        position: absolute;
+        top: 50%;
+        translate: 0 -50%;
+      }
+
+      [data-dlb-prev] {
+        left: 1rem;
+      }
+
+      [data-dlb-next] {
+        right: 1rem;
+      }
+
+      .box-caption {
+        margin: 0;
+        text-align: center;
+      }
+
+      /* Video controls only on videos. The buttons show what they do; screen readers hear
+         "Play" and "Mute" with aria-pressed, which the library sets */
+      .box-video {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: min(100%, 24rem);
+      }
+
+      .box:not([data-dlb-type="video"]) .box-video {
+        display: none;
+      }
+
+      .box [data-dlb-play]::after {
+        content: "Pause";
+      }
+
+      .box[data-dlb-paused] [data-dlb-play]::after {
+        content: "Play";
+      }
+
+      .box [data-dlb-mute]::after {
+        content: "Sound off";
+      }
+
+      .box[data-dlb-muted] [data-dlb-mute]::after {
+        content: "Sound on";
+      }
+
+      [data-dlb-progress] {
+        flex: 1;
+        height: 3px;
+        background:
+          linear-gradient(white, white) left / calc(var(--dlb-progress, 0) * 100%) 100% no-repeat,
+          rgb(255 255 255 / 0.3);
+      }
+
+      /* A tap on a photo hides the buttons; touch screens swipe instead of using the side buttons */
+      .box[data-dlb-ui-hidden] :is(.box-top, .box-bottom, .box-side) {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      @media (pointer: coarse) {
+        .box-side {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-name" href="../">dialog-lightbox</a>
+      <nav><a href="../#examples">Examples</a> <a href="../docs.html">Docs</a> <a href="https://github.com/maxfettinger/dialog-lightbox">GitHub</a></nav>
+    </header>
+    <main class="site-main">
+      <h1>Sensible</h1>
+      <p class="site-lead">What most sites want: square thumbnails, a dark box with a counter, buttons and a caption, and video controls on videos.</p>
+      <p>The links carry the native size and a <code>srcset</code>, so the box opens with a zoom out of the thumbnail at once and loads a file that fits the screen. The panorama zooms to its full width.</p>
+
+      <div class="site-example">
+        <!-- example -->
+        <ul class="gallery" role="list">
+          <li><a href="../media/boat-1600.webp" data-dlb-width="1600" data-dlb-height="1067" data-dlb-srcset="../media/boat-1080.webp 1080w, ../media/boat-1600.webp 1600w"><img src="../media/boat-480.webp" width="480" height="320" loading="lazy" alt="A small boat on still water in front of autumn mountains" /></a></li>
+          <li><a href="../media/northcape-1600.webp" data-dlb-width="1084" data-dlb-height="1600" data-dlb-srcset="../media/northcape-1080.webp 732w, ../media/northcape-1600.webp 1084w"><img src="../media/northcape-480.webp" width="480" height="708" loading="lazy" alt="The globe monument on the cliff of the North Cape above the sea" /></a></li>
+          <li><a href="../media/waves.mp4" data-dlb-type="video" data-dlb-width="960" data-dlb-height="540"><img src="../media/waves-480.webp" width="480" height="270" loading="lazy" alt="Waves breaking on a rocky shore" /></a></li>
+          <li><a href="../media/aurora-3200.webp" data-dlb-width="3200" data-dlb-height="880"><img src="../media/aurora-720.webp" width="720" height="198" loading="lazy" alt="Northern lights over a fjord and snowy mountains at night" /></a></li>
+          <li><a href="../media/bodo-1600.webp" data-dlb-width="1600" data-dlb-height="1053" data-dlb-srcset="../media/bodo-1080.webp 1080w, ../media/bodo-1600.webp 1600w"><img src="../media/bodo-480.webp" width="480" height="316" loading="lazy" alt="A blue fishing boat on calm water near Bodø" /></a></li>
+          <li><a href="../media/snow.mp4" data-dlb-type="video" data-dlb-width="720" data-dlb-height="1280" data-dlb-noaudio><img src="../media/snow-480.webp" width="480" height="854" loading="lazy" alt="Satellite view of fresh snow on the Rocky Mountains" /></a></li>
+        </ul>
+
+        <dialog class="box" aria-label="Photo viewer">
+          <div data-dlb-viewport></div>
+          <div class="box-top">
+            <span data-dlb-counter></span>
+            <button type="button" data-dlb-zoom>Zoom</button>
+            <button type="button" data-dlb-close aria-label="Close">✕</button>
+          </div>
+          <button class="box-side" type="button" data-dlb-prev aria-label="Previous">‹</button>
+          <button class="box-side" type="button" data-dlb-next aria-label="Next">›</button>
+          <div class="box-bottom">
+            <p class="box-caption"></p>
+            <div class="box-video">
+              <button type="button" data-dlb-play aria-label="Play"></button>
+              <button type="button" data-dlb-mute aria-label="Mute"></button>
+              <span data-dlb-progress></span>
+            </div>
+          </div>
+        </dialog>
+        <!-- /example -->
+      </div>
+
+      <section>
+        <h2>HTML</h2>
+        <pre><code data-source="html"></code></pre>
+      </section>
+      <section>
+        <h2>CSS</h2>
+        <pre><code data-source="css"></code></pre>
+      </section>
+      <section>
+        <h2>JavaScript</h2>
+        <pre><code data-source="js"></code></pre>
+      </section>
+      <p>Next: the <a href="film.html">film strip</a>, with the video controls inside the video.</p>
+    </main>
+    <script type="module" data-example>
+      import { lightbox } from "../lib/dialog-lightbox.js";
+
+      const dialog = document.querySelector(".box");
+      const caption = dialog.querySelector(".box-caption");
+      const box = lightbox({ gallery: document.querySelector(".gallery"), dialog });
+
+      // The thumbnail's alt text as the caption
+      box.on("change", ({ link }) => {
+        caption.textContent = link.querySelector("img")?.alt ?? "";
+      });
+    </script>
+    <script type="module" src="../source.js"></script>
+  </body>
+</html>
