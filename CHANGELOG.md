@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-The focus ring on the thumbnail after closing follows the last input: a tap or click after an arrow key no longer shows it.
+After closing, the thumbnail gets focus back without a focus ring, also after Escape or another key.
 
 ## 0.3.0 (2026-10-18)
 
