@@ -4,7 +4,7 @@ A lightweight lightbox on the native `<dialog>`: swipe, zoom, video. It adds beh
 
 Try it on the [demo page](https://dialog-lightbox.maxfettinger.com), ideally on a phone.
 
-The script is about 9 kB gzipped and has no dependencies. You write the dialog, its buttons and every style yourself. The library finds the parts by their `data-dlb-*` attributes, adds the behavior, and reports its state as attributes your CSS can use.
+The script is about 9.5 kB gzipped and has no dependencies. You write the dialog, its buttons and every style yourself. The library finds the parts by their `data-dlb-*` attributes, adds the behavior, and reports its state as attributes your CSS can use.
 
 What it does:
 
@@ -16,11 +16,11 @@ What it does:
 
 ## Compared with other lightboxes
 
-Sizes are the files in each npm package compressed with gzip, measured on 15 October 2026. Our CSS is shipped unminified. Their CSS includes a theme; ours only does layout.
+Sizes are the files in each npm package compressed with gzip, measured on 15 October 2026 (ours on 18 October, for 0.2.0). Their CSS includes a theme; ours only does layout.
 
 | | Script + CSS | Native `<dialog>` | Video | Back button | License |
 |---|---|---|---|---|---|
-| dialog-lightbox | 8.7 + 0.5 kB | yes | video files | yes | MIT |
+| dialog-lightbox | 9.5 + 0.4 kB | yes | video files | yes | MIT |
 | [PhotoSwipe 5](https://photoswipe.com) | 20.9 + 2.4 kB | no | plugin | no | MIT |
 | [GLightbox](https://github.com/biati-digital/glightbox) | 15.3 + 2.6 kB | no | YouTube, Vimeo, files | no | MIT |
 | [lightGallery](https://www.lightgalleryjs.com) | 18.9 + 2.8 kB, plugins extra | no | plugin | plugin | GPLv3 or paid |
@@ -42,15 +42,15 @@ npm install dialog-lightbox
 A plain HTML page can load both files from the jsDelivr CDN, with no build step:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialog-lightbox@0.1/dist/dialog-lightbox.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.css" />
 <script type="module">
-  import { lightbox } from "https://cdn.jsdelivr.net/npm/dialog-lightbox@0.1/dist/dialog-lightbox.js";
+  import { lightbox } from "https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.js";
 
   lightbox({ gallery: document.querySelector(".gallery"), dialog: document.querySelector("dialog") });
 </script>
 ```
 
-`@0.1` gets the newest 0.1.x release. To host the files yourself, download [dialog-lightbox.js](https://cdn.jsdelivr.net/npm/dialog-lightbox@0.1/dist/dialog-lightbox.js) and [dialog-lightbox.css](https://cdn.jsdelivr.net/npm/dialog-lightbox@0.1/dist/dialog-lightbox.css) and put them next to your page.
+`@0.2` gets the newest 0.2.x release. To host the files yourself, download [dialog-lightbox.js](https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.js) and [dialog-lightbox.css](https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.css) and put them next to your page.
 
 ## Markup
 
@@ -152,7 +152,7 @@ Inside the dialog:
 | `[data-dlb-progress]` | Gets `--dlb-progress` from 0 to 1 while a video plays |
 | `<template data-dlb-overlay>` | Copied over the media of each slide as `<div data-dlb-overlay>` (select the copies with `div[data-dlb-overlay]`, since the template has the attribute too), which covers exactly the photo or video and moves, swipes and shrinks with it. `data-dlb-overlay="video"` or `"image"` limits it to one slide type, and you can have one template of each. The buttons and progress bars above work inside it too |
 
-State on the dialog, for your CSS: `data-dlb-type` (`image` or `video`), `data-dlb-first`, `data-dlb-last`, `data-dlb-loading`, `data-dlb-error`, `data-dlb-zoomable`, `data-dlb-zoomed`, `data-dlb-ui-hidden` (after a tap on a photo), `data-dlb-paused`, `data-dlb-muted`, `data-dlb-noaudio`, and `data-dlb-animating` while the media zoom from or to the thumbnail or are dragged down. The current slide has `data-dlb-current`, so overlay copies in the neighbouring slides can look different, and the slides that aren't current are `inert`. The library's CSS fades an overlay out while the dialog is animating or zoomed. `data-dlb-moving` is set while anything moves (opening, closing, a swipe, a zoom, a drag). Once it has settled, `--dlb-media-x`, `--dlb-media-y`, `--dlb-media-width` and `--dlb-media-height` on the dialog give the current photo's or video's rectangle in pixels from the viewport's corner, for things you place around the media yourself. `--dlb-opacity` goes from 0 to 1 while the box opens, and back while it closes or is dragged down.
+State on the dialog, for your CSS: `data-dlb-type` (`image` or `video`), `data-dlb-first`, `data-dlb-last`, `data-dlb-loading`, `data-dlb-error`, `data-dlb-zoomable`, `data-dlb-zoomed`, `data-dlb-ui-hidden` (after a tap on a photo), `data-dlb-paused`, `data-dlb-muted`, `data-dlb-noaudio`, and `data-dlb-animating` while the media zoom from or to the thumbnail or are dragged down. The current slide has `data-dlb-current`, so overlay copies in the neighbouring slides can look different, and the slides that aren't current are `inert`. The library's CSS fades an overlay out while the dialog is animating or zoomed. `data-dlb-moving` is set while anything moves (opening, closing, a swipe, a zoom, a drag). `--dlb-media-x`, `--dlb-media-y`, `--dlb-media-width` and `--dlb-media-height` on the dialog give the rectangle where the current photo or video rests, in pixels from the viewport's corner. They are written as soon as that place is known, so during an animation they already hold the end values; wait for `data-dlb-moving` to go away if you need the media to be there. `--dlb-opacity` goes from 0 to 1 while the box opens, and back while it closes or is dragged down.
 
 ## CSS
 
