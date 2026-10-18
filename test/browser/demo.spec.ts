@@ -17,7 +17,7 @@ test("the start page's gallery opens", async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-for (const gallery of ["frames", "large", "captioned", "clips", "norway", "controlled"]) {
+for (const gallery of ["frames", "large", "captioned", "clips", "linked", "controlled"]) {
   test(`the ${gallery} example opens`, async ({ page }) => {
     const errors = noErrors(page);
     await page.goto("/examples/");
@@ -30,12 +30,12 @@ for (const gallery of ["frames", "large", "captioned", "clips", "norway", "contr
 test("the captions example writes the figure's caption", async ({ page }) => {
   await page.goto("/examples/");
   await page.locator("#captioned a").first().click();
-  await expect(page.locator(".box-caption")).toHaveText(/Bodø/);
+  await expect(page.locator(".box-caption")).toHaveText(/thin line/);
 });
 
 test("a #dlb= link in the text opens its slide", async ({ page }) => {
   await page.goto("/examples/");
-  await page.locator('a[href="#dlb=north-cape"]').click();
+  await page.locator('a[href="#dlb=amber"]').click();
   await expect(page.locator("dialog.box")).toHaveAttribute("open", "");
   await expect(page.locator(".box-count")).toHaveText("2 / 2");
 });

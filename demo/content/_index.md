@@ -2,12 +2,12 @@
 title: dialog-lightbox
 lead: A lightbox on the native <dialog>. Swipe, zoom and video for the photos you link to. It adds the behaviour; your markup and CSS decide how it looks.
 try:
-  - { src: media/boat-1600.webp, thumb: media/boat-480.webp, width: 1600, height: 1067, alt: A small boat on still water in front of autumn mountains }
-  - { src: media/northcape-1600.webp, thumb: media/northcape-480.webp, width: 1084, height: 1600, alt: The globe monument on the cliff of the North Cape above the sea }
-  - { src: media/waves.mp4, thumb: media/waves-480.webp, width: 960, height: 540, video: true, alt: Waves breaking on a rocky shore }
-  - { src: media/aurora-3200.webp, thumb: media/aurora-720.webp, width: 3200, height: 880, alt: Northern lights over a fjord and snowy mountains at night }
-  - { src: media/bodo-1600.webp, thumb: media/bodo-480.webp, width: 1600, height: 1053, alt: A blue fishing boat on calm water near Bodø }
-  - { src: media/ice-1600.webp, thumb: media/ice-480.webp, width: 1047, height: 1600, alt: A small ice floe in fog under a pale sun on a dark sea }
+  - { src: media/photo-7-1600.jpg, thumb: media/photo-7-480.jpg, width: 1600, height: 1066, alt: Soft bands of violet, yellow, mint and purple }
+  - { src: media/photo-4-1600.jpg, thumb: media/photo-4-480.jpg, width: 1066, height: 1600, alt: Amber stripes across dark red }
+  - { src: media/clip-1.mp4, thumb: media/clip-1-480.jpg, width: 720, height: 1280, video: true, alt: Turquoise and dark blue bands drifting }
+  - { src: media/photo-6-3200.jpg, thumb: media/photo-6-720.jpg, width: 3200, height: 800, alt: Purple, a band of orange, and pale lilac }
+  - { src: media/photo-3-1600.jpg, thumb: media/photo-3-480.jpg, width: 1600, height: 1066, alt: A thin blue line between pale blue and navy }
+  - { src: media/photo-5-1600.jpg, thumb: media/photo-5-480.jpg, width: 1066, height: 1600, alt: A pale green band between mint and dark green }
 ---
 
 ## What it does
