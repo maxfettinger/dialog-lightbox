@@ -4,6 +4,8 @@
 
 `[data-dlb-counter]` now gets only the current slide's number, "3", and a new `[data-dlb-total]` gets the number of slides, "16". A page that showed "3 / 16" in one element puts the slash between the two itself.
 
+A looping gallery of two slides shows the other slide on both sides, so a swipe to the right no longer shows empty space.
+
 ## 0.2.0 (2026-10-18)
 
 The page's own controls can now sit on the photo or video. A `<template data-dlb-overlay>` in the dialog is copied over the media of each slide and moves, swipes and shrinks with it, and `data-dlb-overlay="video"` or `"image"` limits it to one slide type. A `[data-dlb-fullscreen]` button hands the current video to the browser's own fullscreen player, which on iPhone is Apple's player.

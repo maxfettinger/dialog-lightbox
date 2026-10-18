@@ -28,7 +28,7 @@ export function change(s: Session, direction: -1 | 1, velocity: number, changed:
     s.view = FIT_VIEW;
     // The new current slide keeps its place on screen; the strip then springs it to the middle.
     s.stripX += direction * s.size.width * (1 + GAP);
-    setSlots(s, next);
+    setSlots(s, next, direction);
     changed();
   }
   void springStrip(s, 0, velocity);

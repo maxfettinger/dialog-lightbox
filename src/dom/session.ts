@@ -111,15 +111,28 @@ export const wrapperSize = (slide: SlideEl, f: Rect): Size => ({
   height: f.height * slide.base,
 });
 
-/** Makes `index` current: keeps slide elements that stay, creates new neighbours, removes the rest. */
-export function setSlots(s: Session, index: number): void {
-  const old = s.slots.filter((slide): slide is SlideEl => slide !== null);
-  const pick = (i: number): SlideEl =>
-    old.find((slide) => slide.data.index === i) ?? createSlide(s.slides[i]!, s.overlays[s.slides[i]!.type]);
-  const [prev, , next] = neighbours(index, s.slides.length, s.loop);
+/**
+ * Makes `index` current after moving `shift` slides (0 for a jump): keeps the slide elements that stay, in
+ * their place on screen, creates new neighbours and removes the rest. With two looping slides the other
+ * slide has an element on each side.
+ */
+export function setSlots(s: Session, index: number, shift = 0): void {
+  const old: (SlideEl | null)[] = [...s.slots];
+  const take = (k: number): SlideEl => {
+    const slide = old[k]!;
+    old[k] = null;
+    return slide;
+  };
+  const want = neighbours(index, s.slides.length, s.loop);
+  // First the elements that are already where the slide will be, then any element of that slide.
+  const kept = want.map((i, k) => (i !== null && old[k + shift]?.data.index === i ? take(k + shift) : null));
   s.index = index;
-  s.slots = [prev === null ? null : pick(prev), pick(index), next === null ? null : pick(next)];
-  for (const slide of old) if (!s.slots.includes(slide)) slide.el.remove();
+  s.slots = want.map((i, k) => {
+    if (i === null) return null;
+    const found = old.findIndex((slide) => slide?.data.index === i);
+    return kept[k] ?? (found < 0 ? createSlide(s.slides[i]!, s.overlays[s.slides[i]!.type]) : take(found));
+  }) as Session["slots"];
+  for (const slide of old) slide?.el.remove();
   for (const slide of s.slots) if (slide && slide.el.parentNode !== s.strip) s.strip.append(slide.el);
 }
 

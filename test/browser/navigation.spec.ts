@@ -43,6 +43,44 @@ test("a looping gallery wraps around", async ({ fixture: page }) => {
   await expect(page.locator(".count")).toHaveText("1 / 3");
 });
 
+test("two looping slides show the other one on both sides", async ({ fixture: page }) => {
+  await page.evaluate(() => {
+    const gallery = document.createElement("div");
+    gallery.id = "pair";
+    gallery.innerHTML =
+      '<a href="media/square.svg"><img src="media/square-thumb.svg" alt="Square"></a>' +
+      '<a href="media/tall.svg" data-dlb-width="600" data-dlb-height="900"><img src="media/tall-thumb.svg" alt="Tall"></a>';
+    document.body.prepend(gallery);
+    window.boxes.push(window.lightbox({ gallery, dialog: document.querySelector("dialog")!, loop: true }));
+  });
+  // Each neighbour's offset in the strip and its placeholder image, from left to right.
+  const sides = (): Promise<[number, string][]> =>
+    page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>("[data-dlb-slide]:not([data-dlb-current])")]
+        .map((el): [number, string] => [
+          Math.round(new DOMMatrix(el.style.transform).e),
+          el.querySelector("img")!.src.split("/").pop()!,
+        ])
+        .sort((a, b) => a[0] - b[0]),
+    );
+  await openAt(page, "pair", 0);
+  // The viewport is 390 wide and slides are 10 % of it apart.
+  expect(await sides()).toEqual([
+    [-429, "tall-thumb.svg"],
+    [429, "tall-thumb.svg"],
+  ]);
+  await page.keyboard.press("ArrowLeft");
+  await expect.poll(() => page.evaluate(() => window.boxes.at(-1)!.current?.index)).toBe(1);
+  expect(await sides()).toEqual([
+    [-429, "square-thumb.svg"],
+    [429, "square-thumb.svg"],
+  ]);
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => page.evaluate(() => window.boxes.at(-1)!.current?.index)).toBe(1);
+  await expect(page.locator("[data-dlb-slide]")).toHaveCount(3);
+});
+
 test("only the current slide is exposed to screen readers", async ({ fixture: page }) => {
   await openAt(page, "one", 1);
   await expect(page.locator("[data-dlb-slide]")).toHaveCount(3);
