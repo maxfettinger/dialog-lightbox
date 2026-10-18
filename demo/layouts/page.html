@@ -1,5 +1,4 @@
-{{- /* A text page, the docs. With toc: true its chapters (the h2 headings) are listed in a sidebar on wide
-       screens, and above the text on narrow ones; the chapter being read is marked while scrolling. */ -}}
+{{- /* A text page, the docs. With toc: true its chapters (the h2 headings) are listed beside the text. */ -}}
 {{ define "main" }}
   <div class="page{{ if .Params.toc }} with-toc{{ end }}">
     <div class="page-head">
@@ -7,33 +6,12 @@
       {{- with .Params.lead }}<p class="lead">{{ . }}</p>{{ end }}
     </div>
     {{- if .Params.toc }}
-      <nav class="toc" aria-label="On this page">
-        <p class="toc-title">On this page</p>
-        <ul>
-          {{- range .Fragments.Headings }}{{ range .Headings }}
-            <li><a href="#{{ .ID }}">{{ .Title | safeHTML }}</a></li>
-          {{- end }}{{ end }}
-        </ul>
-      </nav>
+      {{- $chapters := slice }}
+      {{- range .Fragments.Headings }}{{ range .Headings }}
+        {{- $chapters = $chapters | append (dict "id" .ID "title" .Title) }}
+      {{- end }}{{ end }}
+      {{ partial "toc.html" $chapters }}
     {{- end }}
     <div class="page-body">{{ .Content }}</div>
   </div>
-  {{- if .Params.toc }}
-    <script>
-      // Marks the last chapter whose heading has scrolled past the top fifth of the window.
-      const links = [...document.querySelectorAll(".toc a")];
-      const headings = links.map((link) => document.getElementById(link.hash.slice(1)));
-      let frame = 0;
-      const mark = () => {
-        frame = 0;
-        let current = 0;
-        headings.forEach((heading, i) => {
-          if (heading.getBoundingClientRect().top < innerHeight / 5) current = i;
-        });
-        links.forEach((link, i) => link.toggleAttribute("aria-current", i === current));
-      };
-      addEventListener("scroll", () => (frame ||= requestAnimationFrame(mark)), { passive: true });
-      mark();
-    </script>
-  {{- end }}
 {{ end }}

@@ -67,6 +67,57 @@ test("on a wide screen the docs list their chapters beside the text and mark the
   await expect(toc).toBeInViewport();
 });
 
+test("on a wide screen the examples list their sections beside the text and mark the one being read", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/examples/");
+  const toc = page.locator(".toc");
+  await expect(toc.locator("a")).toHaveCount(7);
+  const [list, title] = [await toc.boundingBox(), await page.locator("h1").boundingBox()];
+  expect(list!.x + list!.width).toBeLessThan(title!.x);
+  await toc.locator('a[href="#video"]').click();
+  await expect(toc.locator("a[aria-current]")).toHaveText("Video");
+  await expect(toc).toBeInViewport();
+});
+
+test("a chapter link marks its chapter even when the page can't scroll its heading to the top", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/docs/");
+  const toc = page.locator(".toc");
+  await toc.locator('a[href="#good-to-know"]').click();
+  await expect(toc.locator("a[aria-current]")).toHaveText("Good to know");
+  await toc.locator('a[href="#gestures-and-keys"]').click();
+  await expect(toc.locator("a[aria-current]")).toHaveText("Gestures and keys");
+  // Scrolling by hand takes over again: at the bottom of the page the last chapter is marked.
+  await page.mouse.move(640, 400);
+  await page.mouse.wheel(0, 5000);
+  await expect(toc.locator("a[aria-current]")).toHaveText("Good to know");
+});
+
+test("a chapter link scrolls there smoothly, unless the reader asks for less motion", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/docs/");
+  const link = page.locator('.toc a[href="#javascript"]');
+  // With reduced motion the link jumps: that is where the heading ends up.
+  await link.click();
+  const end = await page.evaluate(() => scrollY);
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await link.click();
+  // Partway after a moment, then there.
+  const early = await page.evaluate(
+    () => new Promise<number>((resolve) => setTimeout(() => resolve(scrollY), 60)),
+  );
+  expect(early).toBeGreaterThan(0);
+  expect(early).toBeLessThan(end - 50);
+  // Within 2 px: Firefox can round the end of a smooth scroll differently from a jump.
+  await expect.poll(() => page.evaluate((end) => Math.abs(scrollY - end), end)).toBeLessThanOrEqual(2);
+  await expect(page).toHaveURL(/#javascript$/);
+});
+
 test("the docs page has its tables and labelled code", async ({ page }) => {
   const errors = noErrors(page);
   await page.goto("/docs/");

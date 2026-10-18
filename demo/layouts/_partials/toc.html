@@ -1,0 +1,42 @@
+{{- /* The page's chapters, a slice of (dict "id" "title"): a sidebar on wide screens and a row above the text on
+       narrow ones, inside a .with-toc page. The chapter being read is marked while scrolling. */ -}}
+<nav class="toc" aria-label="On this page">
+  <p class="toc-title">On this page</p>
+  <ul>
+    {{- range . }}
+      <li><a href="#{{ .id }}">{{ .title | safeHTML }}</a></li>
+    {{- end }}
+  </ul>
+</nav>
+<script type="module">
+  // Marks the chapter being read: the last one whose heading has scrolled past the top fifth of the window, or
+  // the last chapter once the page is scrolled to the bottom. The page can't always scroll a heading near the
+  // end up to that line, so a click on a link (or a link to a chapter) marks that chapter until the reader
+  // scrolls by hand. A module runs once the page is parsed, so the headings below exist by then.
+  const links = [...document.querySelectorAll(".toc a")];
+  const headings = links.map((link) => document.getElementById(link.hash.slice(1)));
+  let held = links.findIndex((link) => link.hash === location.hash);
+  let frame = 0;
+  const mark = () => {
+    frame = 0;
+    let current = held;
+    if (current < 0) {
+      current = 0;
+      headings.forEach((heading, i) => {
+        if (heading.getBoundingClientRect().top < innerHeight / 5) current = i;
+      });
+      if (scrollY > 0 && scrollY + innerHeight >= document.documentElement.scrollHeight - 1) current = links.length - 1;
+    }
+    links.forEach((link, i) => link.toggleAttribute("aria-current", i === current));
+  };
+  links.forEach((link, i) =>
+    link.addEventListener("click", () => {
+      held = i;
+      mark();
+    }),
+  );
+  for (const type of ["wheel", "touchstart", "keydown", "mousedown"])
+    addEventListener(type, () => (held = -1), { passive: true });
+  addEventListener("scroll", () => (frame ||= requestAnimationFrame(mark)), { passive: true });
+  mark();
+</script>

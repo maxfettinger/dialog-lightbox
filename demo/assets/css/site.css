@@ -20,6 +20,13 @@
   box-sizing: border-box;
 }
 
+/* Links to a chapter scroll there, unless the reader asks for less motion */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -266,7 +273,7 @@ th {
   display: none;
 }
 
-/* On wide screens the docs' chapters move into a sidebar that stays in view, and the page widens for it */
+/* On wide screens the chapters of the docs and the examples move into a sidebar that stays in view, and the page widens for it */
 @media (min-width: 64rem) {
   body:has(.with-toc) {
     --width: 70rem;
