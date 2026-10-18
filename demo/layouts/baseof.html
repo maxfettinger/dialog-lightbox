@@ -16,7 +16,7 @@
   <body>
     <header class="header">
       <a class="brand" href="{{ "" | relURL }}">dialog-lightbox</a>
-      {{- with site.Data.lib }}<span class="tag">v{{ .version }}</span>{{ end }}
+      {{- with hugo.Data.lib }}<span class="tag">v{{ .version }}</span>{{ end }}
       <nav>
         <a href="{{ "examples/" | relURL }}"{{ if eq .Type "examples" }} aria-current="page"{{ end }}>Examples</a>
         <a href="{{ "docs/" | relURL }}"{{ if eq .RelPermalink "/docs/" }} aria-current="page"{{ end }}>Docs</a>
@@ -28,7 +28,7 @@
       {{- block "main" . }}{{ end }}
     </main>
     <footer class="footer">
-      <p>MIT · Photos and videos from Wikimedia Commons, see the <a href="{{ site.Params.repo }}/blob/main/demo/CREDITS.md">credits</a></p>
+      <p>MIT · The photos and clips are generated gradients</p>
     </footer>
     <script>
       for (const button of document.querySelectorAll(".code-copy")) {
