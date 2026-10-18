@@ -1,6 +1,6 @@
 // Pointer events on the viewport go through the gesture state machine; its intents become swipes, pans,
 // drags down to close, taps and double taps.
-import { clampView, FIT_VIEW, panBounds, type Rect, type View, viewRect } from "../core/geometry.js";
+import { clampView, FIT_VIEW, panBounds, viewRect } from "../core/geometry.js";
 import {
   type GestureInput,
   gesture,
@@ -16,16 +16,14 @@ import {
   resist,
   rubber,
   shouldDismiss,
-  spring,
   swipeDirection,
 } from "../core/motion.js";
 import { step } from "../core/navigation.js";
-import { placeAt, play, stop } from "./animate.js";
+import { stop } from "./animate.js";
 import { change, springStrip } from "./navigate.js";
-import { current, fitOf, place, type Session, wrapperSize } from "./session.js";
-import type { SlideEl } from "./slides.js";
+import { current, fitOf, place, type Session } from "./session.js";
 import { backdrop } from "./transitions.js";
-import { toggleZoom, zoomOf } from "./zoom.js";
+import { springView, toggleZoom, zoomOf } from "./zoom.js";
 
 export interface PointerHooks {
   /** The current slide changed after a swipe. */
@@ -80,22 +78,6 @@ export function bindPointer(
     };
   };
 
-  const springView = (slide: SlideEl, f: Rect, target: View, vx: number, vy: number): void => {
-    const { frames, duration } = spring(
-      [s.view.scale, s.view.x, s.view.y],
-      [target.scale, target.x, target.y],
-      [0, vx, vy],
-      12,
-    );
-    const size = wrapperSize(slide, f);
-    s.view = target;
-    place(s);
-    const keyframes = frames.map(([scale = 1, x = 0, y = 0]) => ({
-      transform: placeAt(viewRect(f, { scale, x, y }), size),
-    }));
-    void play(slide.media, keyframes, duration);
-  };
-
   const drag = (mode: Mode, dx: number, dy: number): void => {
     dialog.toggleAttribute("data-dlb-moving", true);
     // A drag begins with dx = dy = 0: remember where everything was.
@@ -140,12 +122,12 @@ export function bindPointer(
     if (!f) return;
     if (mode === "pan") {
       const thrown = { scale: s.view.scale, x: s.view.x + project(vx), y: s.view.y + project(vy) };
-      springView(slide, f, clampView(thrown, panBounds(f, s.view.scale, s.size)), vx, vy);
+      void springView(s, slide, f, clampView(thrown, panBounds(f, s.view.scale, s.size)), vx, vy, 12);
     } else if (shouldDismiss(dy, vy, s.size.height)) {
       hooks.close();
     } else {
       dialog.removeAttribute("data-dlb-animating");
-      springView(slide, f, FIT_VIEW, vx, vy);
+      void springView(s, slide, f, FIT_VIEW, vx, vy, 12);
       void backdrop(dialog, 1);
     }
   };

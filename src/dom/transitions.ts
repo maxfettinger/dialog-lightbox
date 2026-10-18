@@ -1,70 +1,46 @@
 // The opening and closing zoom between a thumbnail and the box, or a fade when no thumbnail is on screen.
-import { type Insets, NO_INSETS, type Rect, thumbStart, viewRect } from "../core/geometry.js";
-import { clipAt, DURATION, EASE, placeAt, play } from "./animate.js";
+// The zoom runs on a spring. The photo's rectangle and the visible frame (the photo clipped to the
+// thumbnail's crop) both move in a straight line, so a cropped thumbnail opens up evenly on every side.
+import { type Insets, mix, NO_INSETS, type Rect, thumbStart, viewRect } from "../core/geometry.js";
+import { clipAt, glide, placeAt } from "./animate.js";
 import { current, fitOf, place, type Session, wrapperSize } from "./session.js";
 import type { SlideEl } from "./slides.js";
 
-export async function openAnimation(s: Session, dialog: HTMLElement): Promise<void> {
+/**
+ * Opens (`open`) or closes the box: a zoom between the thumbnail and the media, or a fade when no thumbnail is
+ * on screen. Closing first scrolls the thumbnail into view and zooms from wherever the media are.
+ */
+export async function zoomBox(s: Session, dialog: HTMLElement, open: boolean): Promise<void> {
   const slide = current(s);
+  const { media } = slide;
+  if (open) place(s);
+  else slide.data.link.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
   const f = fitOf(s, slide);
   const thumb = onScreen(slide);
-  place(s);
+  const omega = open ? 20 : 26;
+  const fade = backdrop(dialog, open ? 1 : 0, open ? 0 : undefined);
   if (!f || !thumb) {
-    await Promise.all([
-      play(slide.media, [{ opacity: 0 }, { opacity: 1 }], DURATION, EASE),
-      backdrop(dialog, 1, 0),
-    ]);
+    media.style.opacity = open ? "" : "0";
+    await Promise.all([glide(media, (p) => ({ opacity: open ? p : 1 - p }), omega), fade]);
     return;
   }
   const size = wrapperSize(slide, f);
-  const start = frameOf(s, slide, thumb);
+  const box = frameOf(s, slide, thumb);
+  const now = { rect: viewRect(f, s.view), clip: NO_INSETS };
+  const [a, b] = open ? [box, now] : [now, box];
+  media.style.transform = placeAt(b.rect, size);
+  media.style.clipPath = clipAt(b.clip, b.rect, size);
   thumb.style.visibility = "hidden";
   await Promise.all([
-    play(
-      slide.media,
-      [
-        { transform: placeAt(start.rect, size), clipPath: clipAt(start.clip, start.rect, size) },
-        { transform: placeAt(f, size), clipPath: clipAt(NO_INSETS, f, size) },
-      ],
-      DURATION,
-      EASE,
+    glide(
+      media,
+      (p) => {
+        const rect = mix(a.rect, b.rect, p);
+        return { transform: placeAt(rect, size), clipPath: clipAt(mix(a.clip, b.clip, p), rect, size) };
+      },
+      omega,
     ),
-    backdrop(dialog, 1, 0),
-  ]);
-  thumb.style.visibility = "";
-}
-
-/** Scrolls the current slide's thumbnail into view, then zooms back onto it from wherever the media are. */
-export async function closeAnimation(s: Session, dialog: HTMLElement): Promise<void> {
-  const slide = current(s);
-  slide.data.link.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
-  const f = fitOf(s, slide);
-  const thumb = onScreen(slide);
-  if (!f || !thumb) {
-    slide.media.style.opacity = "0";
-    await Promise.all([
-      play(slide.media, [{ opacity: 1 }, { opacity: 0 }], DURATION, EASE),
-      backdrop(dialog, 0),
-    ]);
-    return;
-  }
-  const size = wrapperSize(slide, f);
-  const now = viewRect(f, s.view);
-  const end = frameOf(s, slide, thumb);
-  slide.media.style.transform = placeAt(end.rect, size);
-  slide.media.style.clipPath = clipAt(end.clip, end.rect, size);
-  thumb.style.visibility = "hidden";
-  await Promise.all([
-    play(
-      slide.media,
-      [
-        { transform: placeAt(now, size), clipPath: clipAt(NO_INSETS, now, size) },
-        { transform: placeAt(end.rect, size), clipPath: clipAt(end.clip, end.rect, size) },
-      ],
-      DURATION,
-      EASE,
-    ),
-    backdrop(dialog, 0),
+    fade,
   ]);
   thumb.style.visibility = "";
 }
@@ -73,7 +49,7 @@ export async function closeAnimation(s: Session, dialog: HTMLElement): Promise<v
 export function backdrop(dialog: HTMLElement, to: number, from?: number): Promise<void> {
   const start = from ?? (Number.parseFloat(getComputedStyle(dialog).getPropertyValue("--dlb-opacity")) || 0);
   dialog.style.setProperty("--dlb-opacity", String(to));
-  return play(dialog, [{ "--dlb-opacity": String(start) }, { "--dlb-opacity": String(to) }], DURATION, EASE);
+  return glide(dialog, (p) => ({ "--dlb-opacity": String(start + (to - start) * p) }), to ? 20 : 26);
 }
 
 /** The slide's thumbnail if it has a size and lies inside the window, else null. */

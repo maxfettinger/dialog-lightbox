@@ -19,7 +19,7 @@ import {
   setSlots,
 } from "./session.js";
 import { loadLarge, preload, type SlideEl } from "./slides.js";
-import { closeAnimation, openAnimation } from "./transitions.js";
+import { zoomBox } from "./transitions.js";
 import { createVideo } from "./video.js";
 import { toggleZoom, zoomOf } from "./zoom.js";
 
@@ -218,7 +218,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     emit("change", slide.data);
     sync();
     void loadAround(session);
-    void openAnimation(session, dialog).then(() => {
+    void zoomBox(session, dialog, true).then(() => {
       session.busy = false;
       if (session.closing) return;
       dialog.removeAttribute("data-dlb-animating");
@@ -296,7 +296,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     dialog.toggleAttribute("data-dlb-animating", true);
     if (!fromBack) hist?.close();
     video.pause();
-    await closeAnimation(session, dialog);
+    await zoomBox(session, dialog, false);
     finish();
   }
 
