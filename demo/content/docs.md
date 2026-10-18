@@ -84,7 +84,7 @@ box.on("change", (slide) => {
 | `current`, `count` | The current slide (`null` while closed) and the number of slides |
 | `video` | The one `<video>` element |
 | `on(event, handler)` | `"open"`, `"change"` or `"close"`; returns a function that removes the handler. `change` also fires right after `open` |
-| `destroy()` | Closes without animation and removes every listener |
+| `destroy()` | Closes without animation and removes every listener. The last lightbox of a dialog also removes the attributes and text it wrote there |
 
 A slide is `{ index, id, type, link }`, where `link` is the thumbnail's `<a>`.
 

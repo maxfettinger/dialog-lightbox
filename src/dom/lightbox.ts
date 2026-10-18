@@ -2,7 +2,7 @@
 // dom/ modules work on; closing drops it and removes its listeners with one abort() call.
 import { FIT_VIEW, fit, viewRect } from "../core/geometry.js";
 import { step } from "../core/navigation.js";
-import { clear, findControls, render } from "./controls.js";
+import { clear, findControls, render, reset } from "./controls.js";
 import { createHistory, hashId } from "./history.js";
 import { readSlide, readSlides, type SlideData } from "./links.js";
 import { change } from "./navigate.js";
@@ -53,6 +53,8 @@ export interface Lightbox {
 }
 
 let instances = 0;
+/** How many lightboxes use each dialog, so the last destroy() can clean up after all of them. */
+const users = new WeakMap<HTMLDialogElement, number>();
 
 export function lightbox(options: LightboxOptions): Lightbox {
   const { gallery, dialog, loop = false } = options;
@@ -60,6 +62,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
   if (!found) throw new Error("dialog-lightbox: the dialog has no [data-dlb-viewport] element");
   const viewport: HTMLElement = found;
   dialog.setAttribute("data-dlb", "");
+  users.set(dialog, (users.get(dialog) ?? 0) + 1);
   // The viewport takes focus on open, so keys reach the box and not the dialog's first button.
   viewport.tabIndex = -1;
   const galleryId = gallery.id || `g${++instances}`;
@@ -416,8 +419,16 @@ export function lightbox(options: LightboxOptions): Lightbox {
       };
     },
     destroy() {
+      if (life.signal.aborted) return;
       finish();
       life.abort();
+      const left = users.get(dialog)! - 1;
+      users.set(dialog, left);
+      if (left) return;
+      reset(dialog);
+      dialog.removeAttribute("data-dlb");
+      dialog.style.removeProperty("--dlb-opacity");
+      viewport.removeAttribute("tabindex");
     },
   };
 }

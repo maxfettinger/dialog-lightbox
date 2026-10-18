@@ -140,6 +140,31 @@ test("a second lightbox on the same dialog cannot open while one is open", async
   expect(await page.evaluate(() => window.boxes[0]!.current?.id)).toBe("wide");
 });
 
+test("destroying every lightbox of a dialog leaves its markup as it was", async ({ fixture: page }) => {
+  const markup = (): Promise<string> =>
+    page.evaluate(() => document.querySelector("dialog")!.outerHTML.replaceAll(' style=""', ""));
+  const before = await page.evaluate(() => {
+    const dialog = document.querySelector("dialog")!;
+    const copy = dialog.cloneNode(true) as HTMLElement;
+    copy.removeAttribute("data-dlb");
+    copy.querySelector("[data-dlb-viewport]")!.removeAttribute("tabindex");
+    return copy.outerHTML;
+  });
+  await openAt(page, "one", 3);
+  await page.locator("[data-dlb-close]").click();
+  await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
+  // The other galleries still use the dialog.
+  await page.evaluate(() => window.boxes[0]!.destroy());
+  await expect(page.locator("dialog")).toHaveAttribute("data-dlb", "");
+  await openAt(page, "two", 0);
+  await page.keyboard.press("Escape");
+  await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
+  await page.evaluate(() => {
+    for (const box of window.boxes) box.destroy();
+  });
+  expect(await markup()).toBe(before);
+});
+
 test("a destroyed lightbox does not open", async ({ fixture: page }) => {
   await page.evaluate(() => {
     window.boxes[0]!.destroy();
