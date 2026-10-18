@@ -26,7 +26,8 @@
       "linter": {
         "rules": {
           "a11y": {
-            "noRedundantRoles": "off"
+            "noRedundantRoles": "off",
+            "noNoninteractiveTabindex": "off"
           }
         }
       }

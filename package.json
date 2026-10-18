@@ -45,7 +45,7 @@
     "test:browser": "bun --bun playwright test",
     "size": "bun run build && bun scripts/size.ts",
     "dev": "bun scripts/serve.ts",
-    "build:demo": "rm -rf site && bun build demo/index.html --outdir=site --minify && cp -R demo/media site/media",
+    "build:demo": "bun run build && bun scripts/build-demo.ts",
     "check:types": "bun run build && tsc --ignoreConfig --noEmit --module nodenext --moduleResolution nodenext --target es2022 --lib es2023,dom,dom.iterable --types '' dist/types/index.d.ts"
   },
   "devDependencies": {
