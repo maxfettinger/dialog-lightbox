@@ -1,18 +1,14 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (2026-10-18)
 
-The dialog reports the current media's rectangle in `--dlb-media-x`, `-y`, `-width` and `-height` once it has settled, and has `data-dlb-moving` while anything moves.
+The page's own controls can now sit on the photo or video. A `<template data-dlb-overlay>` in the dialog is copied over the media of each slide and moves, swipes and shrinks with it, and `data-dlb-overlay="video"` or `"image"` limits it to one slide type. A `[data-dlb-fullscreen]` button hands the current video to the browser's own fullscreen player, which on iPhone is Apple's player.
 
-A `[data-dlb-fullscreen]` button opens the current video in the browser's own fullscreen player. The size check allows 10 kB for the script now.
+A `#dlb=<id>` link now also works on a page that is already open: it opens that slide, or moves to it when the box is open, and a hash without `#dlb=` closes the box. The dialog has `data-dlb-animating` during the opening and closing zoom and the drag down, `data-dlb-moving` while anything moves, and the resting rectangle of the media in `--dlb-media-x`, `-y`, `-width` and `-height`.
 
-A `<template data-dlb-overlay>` in the dialog puts the page's own controls over each photo or video, so they move with the media. The dialog has `data-dlb-animating` during the opening and closing zoom and the drag down. Buttons work wherever they are in the dialog, slides that aren't current are inert, and the CSS is now minified.
+Buttons work wherever they are in the dialog, slides that aren't current are inert, a CSS reset that caps every element's width no longer stops the zoom, and the CSS is minified. A link to the package on jsDelivr without a file path gives the script, and each GitHub release has the built files attached.
 
-A `#dlb=<id>` link now also works on a page that is already open: it opens that slide, or moves to it if the box is open. A hash without `#dlb=` closes the box, like the back button.
-
-A CSS reset that caps every element's width (`* { max-width: 100% }`) no longer stops the zoom. The README explains resets, the two images in a slide and first-frame posters.
-
-A link to the package on jsDelivr without a file path now gives the script. Each GitHub release has the built script and CSS attached.
+The script is about 9.5 kB gzipped, and the size check allows 10 kB.
 
 ## 0.1.0 (2026-10-15)
 
