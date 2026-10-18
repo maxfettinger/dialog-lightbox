@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+The focus ring on the thumbnail after closing follows the last input: a tap or click after an arrow key no longer shows it.
+
 ## 0.3.0 (2026-10-18)
 
 This release changes two attributes: the counter is split in two, and `data-dlb-srcset` is removed.

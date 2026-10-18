@@ -72,7 +72,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     close: new Set(),
   };
   let s: Session | null = null;
-  /** A key was pressed since the box opened: closing then shows the focus ring on the thumbnail. */
+  /** The last input in the box was a key: closing then shows the focus ring on the thumbnail. */
   let keyed = false;
   /** Moves asked for during the opening animation, made once it ends. */
   const queue: (() => void)[] = [];
@@ -258,6 +258,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
     // On the document: when a focused button disappears (an overlay on a slide that turned inert, the
     // fullscreen player closing), focus falls back to the body, and the keys must still work.
     document.addEventListener("keydown", onKey, { signal });
+    dialog.addEventListener("pointerdown", () => (keyed = false), { signal });
     dialog.addEventListener("dlbmove", () => dialog.toggleAttribute("data-dlb-moving", true), { signal });
     dialog.addEventListener("dlbsettle", settle, { signal });
     dialog.addEventListener(
