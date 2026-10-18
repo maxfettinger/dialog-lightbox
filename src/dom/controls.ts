@@ -74,6 +74,17 @@ export function clear(dialog: HTMLDialogElement): void {
     if (name.startsWith("data-dlb-")) dialog.removeAttribute(name);
 }
 
+/** Takes back everything render() wrote, when the last lightbox of the dialog is destroyed. */
+export function reset(dialog: HTMLDialogElement): void {
+  for (const [name, elements] of Object.entries(findControls(dialog)))
+    for (const element of elements) {
+      element.removeAttribute("disabled");
+      element.removeAttribute("aria-pressed");
+      element.style.removeProperty("--dlb-progress");
+      if (name === "counter" || name === "total") element.textContent = "";
+    }
+}
+
 function disable(elements: HTMLElement[], disabled: boolean): void {
   for (const element of elements) element.toggleAttribute("disabled", disabled);
 }
