@@ -97,6 +97,27 @@ test("fast key presses land on the right slide with three slide elements at most
   await expect(page.locator("[data-dlb-slide]")).toHaveCount(3);
 });
 
+test("moves asked for while the box opens happen once it is open", async ({ fixture: page }) => {
+  await page.evaluate(() => {
+    const box = window.boxes[0]!;
+    box.open(0);
+    box.next();
+    box.next();
+  });
+  await expect(page.locator(".count")).toHaveText("3 / 7");
+  await page.evaluate(() => {
+    const box = window.boxes[0]!;
+    box.close();
+  });
+  await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
+  await page.evaluate(() => {
+    const box = window.boxes[0]!;
+    box.open(1);
+    box.goTo(5);
+  });
+  await expect(page.locator(".count")).toHaveText("6 / 7");
+});
+
 test("goTo jumps to any slide", async ({ fixture: page }) => {
   await openAt(page, "one", 0);
   await page.evaluate(() => window.boxes[0]!.goTo(4));

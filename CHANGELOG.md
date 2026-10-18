@@ -6,6 +6,8 @@
 
 A looping gallery of two slides shows the other slide on both sides, so a swipe to the right no longer shows empty space.
 
+`next()`, `prev()` and `goTo()` called while the box zooms open, for example right after `open()`, now wait for the zoom to end instead of being dropped.
+
 ## 0.2.0 (2026-10-18)
 
 The page's own controls can now sit on the photo or video. A `<template data-dlb-overlay>` in the dialog is copied over the media of each slide and moves, swipes and shrinks with it, and `data-dlb-overlay="video"` or `"image"` limits it to one slide type. A `[data-dlb-fullscreen]` button hands the current video to the browser's own fullscreen player, which on iPhone is Apple's player.
