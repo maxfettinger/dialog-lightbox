@@ -21,6 +21,6 @@ if (process.argv.includes("--serve")) {
 } else {
   await cp("dist/dialog-lightbox.js", "demo/static/lib/dialog-lightbox.js");
   await cp("dist/dialog-lightbox.css", "demo/static/lib/dialog-lightbox.css");
-  await $`hugo --source demo --destination ${process.cwd()}/site --minify --quiet --cleanDestinationDir`;
+  await $`hugo --source demo --destination ${process.cwd()}/site --minify --cleanDestinationDir`;
   console.log("Demo site in site/");
 }
