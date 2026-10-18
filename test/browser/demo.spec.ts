@@ -81,6 +81,22 @@ test("on a wide screen the examples list their sections beside the text and mark
   await expect(toc).toBeInViewport();
 });
 
+test("a chapter link marks its chapter even when the page can't scroll its heading to the top", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/docs/");
+  const toc = page.locator(".toc");
+  await toc.locator('a[href="#good-to-know"]').click();
+  await expect(toc.locator("a[aria-current]")).toHaveText("Good to know");
+  await toc.locator('a[href="#gestures-and-keys"]').click();
+  await expect(toc.locator("a[aria-current]")).toHaveText("Gestures and keys");
+  // Scrolling by hand takes over again: at the bottom of the page the last chapter is marked.
+  await page.mouse.move(640, 400);
+  await page.mouse.wheel(0, 5000);
+  await expect(toc.locator("a[aria-current]")).toHaveText("Good to know");
+});
+
 test("the docs page has its tables and labelled code", async ({ page }) => {
   const errors = noErrors(page);
   await page.goto("/docs/");
