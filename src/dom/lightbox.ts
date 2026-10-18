@@ -72,8 +72,6 @@ export function lightbox(options: LightboxOptions): Lightbox {
     close: new Set(),
   };
   let s: Session | null = null;
-  /** The last input in the box was a key: closing then shows the focus ring on the thumbnail. */
-  let keyed = false;
   /** Moves asked for during the opening animation, made once it ends. */
   const queue: (() => void)[] = [];
   const video = createVideo(() => sync(), life.signal);
@@ -177,7 +175,6 @@ export function lightbox(options: LightboxOptions): Lightbox {
   }
 
   function onKey(event: KeyboardEvent): void {
-    keyed = true;
     if (!s || s.closing || event.altKey || event.metaKey || event.ctrlKey) return;
     const target = event.target instanceof Element ? event.target : null;
     if (target?.closest("input, select, textarea")) return;
@@ -211,7 +208,6 @@ export function lightbox(options: LightboxOptions): Lightbox {
       if (type !== "image") overlays.video ??= template;
     }
     queue.length = 0;
-    keyed = false;
     const session = createSession(slides, index, loop, viewport, overlays);
     s = session;
     session.busy = true;
@@ -258,7 +254,6 @@ export function lightbox(options: LightboxOptions): Lightbox {
     // On the document: when a focused button disappears (an overlay on a slide that turned inert, the
     // fullscreen player closing), focus falls back to the body, and the keys must still work.
     document.addEventListener("keydown", onKey, { signal });
-    dialog.addEventListener("pointerdown", () => (keyed = false), { signal });
     dialog.addEventListener("dlbmove", () => dialog.toggleAttribute("data-dlb-moving", true), { signal });
     dialog.addEventListener("dlbsettle", settle, { signal });
     dialog.addEventListener(
@@ -321,9 +316,10 @@ export function lightbox(options: LightboxOptions): Lightbox {
     for (const name of ["x", "y", "width", "height"]) dialog.style.removeProperty(`--dlb-media-${name}`);
     if (dialog.open) dialog.close();
     const slide = current(session);
-    // Firefox may have focused the link already when the dialog closed; blur() lets focusVisible apply.
+    // Focus back on the thumbnail, never with a focus ring. Firefox may have focused the link with a ring
+    // already when the dialog closed; blur() lets focusVisible apply.
     slide.data.link.blur();
-    slide.data.link.focus({ preventScroll: true, focusVisible: keyed });
+    slide.data.link.focus({ preventScroll: true, focusVisible: false });
     emit("close", slide.data);
   }
 

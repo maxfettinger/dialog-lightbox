@@ -62,29 +62,22 @@ test("the close button closes and focus returns to the thumbnail", async ({ fixt
   expect(await page.evaluate(() => window.log)).toEqual(["open:wide", "change:wide", "close:wide"]);
 });
 
-test("after a tap on close the thumbnail gets focus without a focus ring, after Escape with one", async ({
+test("after closing, by tap or by key, the thumbnail gets focus without a focus ring", async ({
   fixture: page,
 }) => {
-  const ring = (): Promise<boolean> =>
-    page.evaluate(() => document.querySelector("#one a")!.matches(":focus-visible"));
-  await page.locator("#one a").first().tap();
-  await page.locator("[data-dlb-close]").tap();
-  await expect(page.locator("#one a").first()).toBeFocused();
-  expect(await ring()).toBe(false);
-  await page.locator("#one a").first().tap();
-  await page.keyboard.press("Escape");
-  await expect(page.locator("#one a").first()).toBeFocused();
-  expect(await ring()).toBe(true);
-});
-
-test("a tap on close after an arrow key returns focus without a ring", async ({ fixture: page }) => {
+  const ring = (): Promise<boolean> => page.evaluate(() => document.activeElement!.matches(":focus-visible"));
   await page.locator("#one a").first().tap();
   await page.keyboard.press("ArrowRight");
   await page.locator("[data-dlb-close]").tap();
   await expect(page.locator("#one a").nth(1)).toBeFocused();
-  expect(await page.evaluate(() => document.querySelectorAll("#one a")[1]!.matches(":focus-visible"))).toBe(
-    false,
-  );
+  expect(await ring()).toBe(false);
+  // With the closing animation, as in use: WebKit turns the ring on for a key released after the focus moved.
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.locator("#one a").first().tap();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
+  await expect(page.locator("#one a").first()).toBeFocused();
+  expect(await ring()).toBe(false);
 });
 
 test("Escape closes", async ({ fixture: page }) => {
