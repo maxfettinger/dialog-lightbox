@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import { expect, openAt, test } from "./helpers";
 
 test("a click on a thumbnail opens its slide", async ({ fixture: page }) => {
@@ -148,4 +149,54 @@ test("destroying before the deep link opens leaves the dialog closed", async ({ 
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   });
   await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
+});
+
+test.describe("on a phone, on a page wider than the screen", () => {
+  // Mobile browsers widen the layout viewport to fit content that overflows sideways, and a fixed dialog
+  // grows with it, out past the screen's right edge.
+  test.use({ isMobile: true });
+  test.skip(({ browserName }) => browserName === "firefox", "Firefox has no mobile emulation");
+
+  /** Adds content 600 px wide, as an overflowing element on a real page would. */
+  const widen = (page: Page) =>
+    page.evaluate(() => {
+      const wide = document.createElement("div");
+      wide.style.cssText = "width: 600px; height: 10px";
+      document.body.prepend(wide);
+    });
+
+  /** The dialog's left and right edges on the screen, and the screen's width. */
+  const onScreen = (page: Page) =>
+    page.evaluate(() => {
+      const screen = visualViewport!;
+      const box = document.querySelector("dialog")!.getBoundingClientRect();
+      return [box.left - screen.offsetLeft, box.right - screen.offsetLeft, screen.width].map(Math.round);
+    });
+
+  test("the box fits the screen", async ({ fixture: page }) => {
+    await widen(page);
+    await openAt(page, "one", 0);
+    expect(await onScreen(page)).toEqual([0, 390, 390]);
+  });
+
+  test("the box fits the screen after panning sideways", async ({ fixture: page, browserName }) => {
+    test.skip(browserName !== "chromium", "panning by touch needs the DevTools protocol");
+    await widen(page);
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send("Input.synthesizeScrollGesture", {
+      x: 300,
+      y: 400,
+      xDistance: -210,
+      yDistance: 0,
+      gestureSourceType: "touch",
+    });
+    expect(await page.evaluate(() => visualViewport!.offsetLeft)).toBe(210);
+    // A click from script, so Playwright doesn't scroll the link into view first.
+    await page
+      .locator("#one a")
+      .nth(2)
+      .evaluate((link: HTMLElement) => link.click());
+    await expect(page.locator("dialog")).toHaveAttribute("open", "");
+    expect(await onScreen(page)).toEqual([0, 390, 390]);
+  });
 });

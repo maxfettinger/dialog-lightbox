@@ -11,6 +11,12 @@
     overflow: hidden;
   }
 
+  /* On phones, content that overflows sideways widens the layout viewport and the fixed dialog with it.
+     Clipped, the page is as wide as the screen again. clip, unlike hidden, leaves sticky elements alone. */
+  html:has(dialog[data-dlb][open]) body {
+    overflow-x: clip;
+  }
+
   dialog[data-dlb] {
     inset: 0;
     width: 100%;
