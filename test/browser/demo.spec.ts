@@ -97,6 +97,26 @@ test("a chapter link marks its chapter even when the page can't scroll its headi
   await expect(toc.locator("a[aria-current]")).toHaveText("Good to know");
 });
 
+test("a chapter link scrolls there smoothly, unless the reader asks for less motion", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/docs/");
+  const link = page.locator('.toc a[href="#javascript"]');
+  // With reduced motion the link jumps: that is where the heading ends up.
+  await link.click();
+  const end = await page.evaluate(() => scrollY);
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await link.click();
+  // Partway after a moment, then there.
+  const early = await page.evaluate(
+    () => new Promise<number>((resolve) => setTimeout(() => resolve(scrollY), 60)),
+  );
+  expect(early).toBeGreaterThan(0);
+  expect(early).toBeLessThan(end - 50);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeCloseTo(end, 0);
+  await expect(page).toHaveURL(/#javascript$/);
+});
+
 test("the docs page has its tables and labelled code", async ({ page }) => {
   const errors = noErrors(page);
   await page.goto("/docs/");
