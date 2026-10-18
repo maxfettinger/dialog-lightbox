@@ -1,0 +1,52 @@
+{{ define "main" }}
+  <section class="hero">
+    <h1>A lightbox on the native <code>&lt;dialog&gt;</code></h1>
+    <p class="lead">{{ .Params.lead }}</p>
+    <p class="hero-links">
+      <a class="button" href="#install">Install</a>
+      <a class="button button-quiet" href="{{ "docs/" | relURL }}">Read the docs</a>
+    </p>
+  </section>
+
+  <section class="try" aria-labelledby="try">
+    <h2 id="try">Try it</h2>
+    <p>Tap a photo, swipe, drag down to close. Best on a phone.</p>
+    <ul class="try-gallery" role="list">
+      {{- range .Params.try }}
+        <li>
+          <a href="{{ .src | relURL }}" data-dlb-width="{{ .width }}" data-dlb-height="{{ .height }}"{{ if .video }} data-dlb-type="video"{{ end }}>
+            <img src="{{ .thumb | relURL }}" alt="{{ .alt }}" loading="lazy" />
+          </a>
+        </li>
+      {{- end }}
+    </ul>
+    <dialog class="try-box" aria-label="Photo viewer">
+      <div data-dlb-viewport></div>
+      <div class="try-bar">
+        <span data-dlb-counter></span>
+        <button type="button" data-dlb-close aria-label="Close">×</button>
+      </div>
+    </dialog>
+  </section>
+
+  {{ .Content }}
+
+  <h2 id="examples">Examples</h2>
+  <p>Each example runs on its page, with its full code below, ready to copy.</p>
+  <ul class="cards" role="list">
+    {{- range (where site.RegularPages "Section" "examples").ByWeight }}
+      <li>
+        <a href="{{ .RelPermalink }}">
+          <strong>{{ .Title }}</strong>
+          <span>{{ .Params.lead }}</span>
+        </a>
+      </li>
+    {{- end }}
+  </ul>
+
+  <script type="module">
+    import { lightbox } from "{{ "lib/dialog-lightbox.js" | relURL }}";
+
+    lightbox({ gallery: document.querySelector(".try-gallery"), dialog: document.querySelector(".try-box") });
+  </script>
+{{ end }}

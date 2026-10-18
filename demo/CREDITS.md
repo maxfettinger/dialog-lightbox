@@ -1,6 +1,6 @@
 # Demo media and fonts
 
-The photos and videos in `media/` come from Wikimedia Commons, resized and re-encoded for the demo (WebP photos, H.264 videos trimmed to a few seconds). They are not covered by the library's MIT license; each keeps its own license below. The resized copies are shared under the same license as the original.
+The photos and videos in `static/media/` come from Wikimedia Commons, resized and re-encoded for the demo (WebP photos, H.264 videos trimmed to a few seconds). They are not covered by the library's MIT license; each keeps its own license below. The resized copies are shared under the same license as the original.
 
 | File | Author | License | Source |
 |---|---|---|---|
@@ -16,4 +16,4 @@ The photos and videos in `media/` come from Wikimedia Commons, resized and re-en
 
 The video posters are each video's first frame.
 
-`fonts/` holds PT Serif by ParaType, under the SIL Open Font License (`fonts/OFL.txt`). The icons in the film strip example are from [Feather](https://feathericons.com) by Cole Bemis, MIT.
+The icons in the film strip example are from [Feather](https://feathericons.com) by Cole Bemis, MIT.

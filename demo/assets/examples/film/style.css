@@ -1,0 +1,272 @@
+/* Feather icons, drawn in the text colour */
+.icon {
+  width: 1em;
+  height: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* A strip of 35mm film, measured from the frame's height: --mm is one millimetre of film. Frames are
+   36 × 24mm, 2mm apart, with sprocket holes cut out of the film's edges by a mask. */
+.film {
+  --mm: calc(clamp(10rem, 8rem + 8vw, 12rem) / 24);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--mm);
+  scrollbar-width: none;
+}
+
+.film ul {
+  display: flex;
+  gap: calc(2 * var(--mm));
+  width: max-content;
+  margin: 0;
+  padding: calc(5.5 * var(--mm)) var(--mm);
+  list-style: none;
+  background: #0c0c0c;
+  counter-reset: frame;
+  mask:
+    repeating-linear-gradient(
+      to right,
+      #000 0 calc(1.385 * var(--mm)),
+      transparent 0 calc(3.365 * var(--mm)),
+      #000 0 calc(4.75 * var(--mm))
+    ),
+    linear-gradient(
+      to bottom,
+      #000 0 calc(2 * var(--mm)),
+      transparent 0 calc(4.79 * var(--mm)),
+      #000 0 calc(100% - 4.79 * var(--mm)),
+      transparent 0 calc(100% - 2 * var(--mm)),
+      #000 0
+    );
+}
+
+.film li {
+  position: relative;
+  flex: none;
+  counter-increment: frame;
+  scroll-snap-align: start;
+}
+
+/* The frame is cropped with object-fit: cover; the box zooms out of it to the whole photo */
+.film img {
+  display: block;
+  width: calc(36 * var(--mm));
+  height: calc(24 * var(--mm));
+  object-fit: cover;
+}
+
+/* Edge print: the frame number above, the place below, in the film's orange */
+.film li::before,
+.film figcaption {
+  position: absolute;
+  inset-inline: 0;
+  overflow: hidden;
+  color: #f68f31;
+  font:
+    600 max(0.5rem, 1.25 * var(--mm)) / 1.5 ui-monospace,
+    Menlo,
+    monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.film li::before {
+  content: counter(frame) " ▸";
+  bottom: calc(100% + 3.2 * var(--mm));
+}
+
+.film figure {
+  margin: 0;
+}
+
+.film figcaption {
+  top: calc(100% + 3.2 * var(--mm));
+}
+
+.film [data-credit] {
+  display: none;
+}
+
+/* A play mark on video frames */
+.film [data-dlb-type="video"] {
+  position: relative;
+  display: block;
+}
+
+.film [data-dlb-type="video"] .icon {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  font-size: calc(8 * var(--mm));
+  color: white;
+  fill: white;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.7));
+}
+
+/* The viewer: the film's black behind the photo, white icons, the orange for the counter and place */
+.viewer {
+  background: transparent;
+  color: white;
+}
+
+.viewer::backdrop {
+  background: rgb(12 12 12 / calc(var(--dlb-opacity) * 0.96));
+}
+
+.viewer [data-dlb-viewport] {
+  padding: 3rem 0 2.75rem;
+}
+
+@media (min-width: 48rem) {
+  .viewer [data-dlb-viewport] {
+    padding-inline: 4rem;
+  }
+}
+
+.viewer-top,
+.viewer-bottom {
+  position: absolute;
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  transition: opacity 0.2s;
+}
+
+.viewer-top {
+  top: 0;
+}
+
+.viewer-bottom {
+  bottom: 0;
+  justify-content: center;
+}
+
+[data-dlb-counter] {
+  margin-right: auto;
+  color: #f68f31;
+  font:
+    600 0.9rem / 1 ui-monospace,
+    Menlo,
+    monospace;
+  letter-spacing: 0.1em;
+}
+
+.viewer button {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.viewer button .icon {
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.7));
+}
+
+.viewer button:disabled {
+  visibility: hidden;
+}
+
+@media (hover: hover) {
+  .viewer button:hover {
+    color: #f68f31;
+  }
+}
+
+.viewer-side {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.viewer [data-dlb-prev] {
+  left: 0.5rem;
+}
+
+.viewer [data-dlb-next] {
+  right: 0.5rem;
+}
+
+.viewer-caption {
+  margin: 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.viewer-place {
+  color: #f68f31;
+  font:
+    600 0.75rem / 1.5 ui-monospace,
+    Menlo,
+    monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* The video's controls sit inside the video: the library copies the template over each video, so they
+   move, swipe and shrink with it. Clicks pass through to the video except on the buttons. */
+.viewer [data-dlb-overlay] {
+  pointer-events: none;
+}
+
+.viewer-overlay {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  padding: 0.25rem 0.25rem 2.5rem;
+  background: linear-gradient(rgb(0 0 0 / 0.45), rgb(0 0 0 / 0.15) 60%, transparent);
+}
+
+.viewer [data-dlb-fullscreen] {
+  margin-left: auto;
+}
+
+.viewer [data-dlb-fullscreen]:disabled {
+  display: none;
+}
+
+.viewer [data-dlb-progress] {
+  position: absolute;
+  inset: auto 0 0;
+  height: 4px;
+  background:
+    linear-gradient(#f68f31, #f68f31) left / calc(var(--dlb-progress, 0) * 100%) 100% no-repeat,
+    rgb(255 255 255 / 0.25);
+}
+
+/* Play or pause, sound on or off, from the dialog's state; previews of other videos always show play */
+.viewer[data-dlb-paused] .icon-pause,
+.viewer:not([data-dlb-paused]) .icon-play,
+.viewer[data-dlb-muted] .icon-volume,
+.viewer:not([data-dlb-muted]) .icon-muted,
+.viewer [data-dlb-slide]:not([data-dlb-current]) .icon-pause {
+  display: none;
+}
+
+.viewer [data-dlb-slide]:not([data-dlb-current]) .icon-play {
+  display: block;
+}
+
+.viewer[data-dlb-ui-hidden] :is(.viewer-top, .viewer-bottom, .viewer-side) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  .viewer-side {
+    display: none;
+  }
+}

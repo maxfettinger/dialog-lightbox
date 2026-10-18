@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+    <meta name="description" content="{{ .Description | default site.Params.description }}" />
+    {{- with resources.Get "css/site.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ .RelPermalink }}" />
+    {{- end }}
+    <link rel="stylesheet" href="{{ "lib/dialog-lightbox.css" | relURL }}" />
+    {{- block "head" . }}{{ end }}
+  </head>
+  <body>
+    <header class="header">
+      <a class="brand" href="{{ "" | relURL }}">dialog-lightbox</a>
+      <nav>
+        <a href="{{ "" | relURL }}#examples">Examples</a>
+        <a href="{{ "docs/" | relURL }}">Docs</a>
+        <a href="{{ site.Params.repo }}">GitHub</a>
+      </nav>
+    </header>
+    <main class="main">
+      {{- block "main" . }}{{ end }}
+    </main>
+    <footer class="footer">
+      <p>MIT licensed · <a href="{{ site.Params.repo }}">GitHub</a> · <a href="https://www.npmjs.com/package/dialog-lightbox">npm</a> · Photos and videos from Wikimedia Commons, see the <a href="{{ site.Params.repo }}/blob/main/demo/CREDITS.md">credits</a></p>
+    </footer>
+  </body>
+</html>

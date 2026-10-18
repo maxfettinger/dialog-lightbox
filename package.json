@@ -46,6 +46,7 @@
     "size": "bun run build && bun scripts/size.ts",
     "dev": "bun scripts/serve.ts",
     "build:demo": "bun run build && bun scripts/build-demo.ts",
+    "dev:demo": "bun scripts/build-demo.ts --serve",
     "check:types": "bun run build && tsc --ignoreConfig --noEmit --module nodenext --moduleResolution nodenext --target es2022 --lib es2023,dom,dom.iterable --types '' dist/types/index.d.ts"
   },
   "devDependencies": {
