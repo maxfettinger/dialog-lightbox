@@ -8,7 +8,6 @@ export interface SlideEl {
   el: HTMLElement;
   /** The wrapper that is sized and transformed. */
   media: HTMLElement;
-  large: HTMLImageElement | null;
   /** Loading of the large image, started once. */
   ready: Promise<void> | null;
   status: "loading" | "ready" | "error";
@@ -45,43 +44,36 @@ export function createSlide(data: SlideData, overlay?: HTMLTemplateElement): Sli
     data,
     el,
     media,
-    large: null,
     ready: null,
     status: data.type === "video" ? "ready" : "loading",
     base: 1,
   };
 }
 
-export function image(src: string, alt: string, srcset?: string, sizes?: number): HTMLImageElement {
+export function image(src: string, alt: string): HTMLImageElement {
   const img = new Image();
   img.alt = alt;
   img.draggable = false;
   img.style.cssText = FILL;
-  if (srcset) {
-    img.sizes = `${Math.round(sizes ?? innerWidth)}px`;
-    img.srcset = srcset;
-  }
   img.src = src;
   return img;
 }
 
 /** Loads and decodes the large image once, then lays it over the placeholder. Never rejects. */
-export function loadLarge(slide: SlideEl, sizes: number): Promise<void> {
-  slide.ready ??= decode(slide, sizes);
+export function loadLarge(slide: SlideEl): Promise<void> {
+  slide.ready ??= decode(slide);
   return slide.ready;
 }
 
-async function decode(slide: SlideEl, sizes: number): Promise<void> {
+async function decode(slide: SlideEl): Promise<void> {
   const { data } = slide;
   if (data.type === "video") return;
   const alt = data.thumb?.alt ?? data.link.textContent?.trim() ?? "";
-  const img = image(data.src, alt, data.srcset, sizes);
+  const img = image(data.src, alt);
   try {
     await img.decode();
     data.aspect ??= { width: img.naturalWidth, height: img.naturalHeight };
-    // With a srcset, naturalWidth depends on the chosen file; the native width came from the srcset then.
-    if (!data.srcset) data.native ??= img.naturalWidth;
-    slide.large = img;
+    data.native ??= img.naturalWidth;
     slide.media.append(img);
     slide.status = "ready";
   } catch {
@@ -92,8 +84,8 @@ async function decode(slide: SlideEl, sizes: number): Promise<void> {
 const preloaded = new WeakSet<HTMLAnchorElement>();
 
 /** Starts loading a link's large image before it opens (on mouse hover). */
-export function preload(data: SlideData, sizes: number): void {
+export function preload(data: SlideData): void {
   if (data.type === "video" || preloaded.has(data.link)) return;
   preloaded.add(data.link);
-  image(data.src, "", data.srcset, sizes);
+  image(data.src, "");
 }

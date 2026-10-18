@@ -1,6 +1,6 @@
 // lightbox(): wires a gallery of links to a <dialog>. Each opening is a session (session.ts) that the other
 // dom/ modules work on; closing drops it and removes its listeners with one abort() call.
-import { FIT_VIEW, fit, viewRect } from "../core/geometry.js";
+import { FIT_VIEW, viewRect } from "../core/geometry.js";
 import { step } from "../core/navigation.js";
 import { clear, findControls, render, reset } from "./controls.js";
 import { createHistory, hashId } from "./history.js";
@@ -8,7 +8,6 @@ import { readSlide, readSlides, type SlideData } from "./links.js";
 import { change } from "./navigate.js";
 import { bindPointer } from "./pointer.js";
 import {
-  areaOf,
   createSession,
   current,
   fitOf,
@@ -145,7 +144,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
 
   async function load(session: Session, slide: SlideEl | null): Promise<void> {
     if (!slide) return;
-    await loadLarge(slide, (fitOf(session, slide)?.width ?? session.size.width) * slide.base);
+    await loadLarge(slide);
     if (s !== session) return;
     place(session);
     sync();
@@ -370,8 +369,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
       const index = link ? links().indexOf(link) : -1;
       if (event.pointerType !== "mouse" || !link || index < 0) return;
       const data = readSlide(link, index, galleryId);
-      const area = areaOf(viewport, { width: innerWidth, height: innerHeight });
-      preload(data, data.aspect ? fit(data.aspect, area).width : area.width);
+      preload(data);
     },
     { signal: life.signal },
   );

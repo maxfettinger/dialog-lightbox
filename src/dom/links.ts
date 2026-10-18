@@ -9,7 +9,6 @@ export interface SlideData {
   link: HTMLAnchorElement;
   thumb: HTMLImageElement | null;
   src: string;
-  srcset: string | undefined;
   /** Aspect ratio as a size; null until the large image has loaded when nothing else tells it. */
   aspect: Size | null;
   /** Native width in CSS pixels, for zooming. */
@@ -28,8 +27,7 @@ export function readSlide(link: HTMLAnchorElement, index: number, galleryId: str
     link,
     thumb,
     src: link.href,
-    srcset: dataset.dlbSrcset,
-    ...resolveSize(Number(dataset.dlbWidth), Number(dataset.dlbHeight), natural, dataset.dlbSrcset),
+    ...resolveSize(Number(dataset.dlbWidth), Number(dataset.dlbHeight), natural),
     audio: dataset.dlbNoaudio === undefined,
   };
 }

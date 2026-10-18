@@ -61,8 +61,7 @@ export async function toggleZoom(s: Session, sync: () => void, point?: Point): P
   sync();
   await done;
   if (current(s) !== slide || s.view !== target) return;
-  // Re-render at the new size: the browser draws sharp pixels, and srcset can pick a larger file.
+  // Re-render at the new size, so the browser draws sharp pixels.
   slide.base = target.scale;
-  if (slide.large?.srcset) slide.large.sizes = `${Math.round(f.width * target.scale)}px`;
   place(s);
 }

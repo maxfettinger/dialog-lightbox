@@ -8,9 +8,9 @@ examples:
     text: >-
       Crop thumbnails with CSS, not on the server. The thumbnail keeps the whole photo and `object-fit: cover` cuts the square, so the box can open with a zoom out of the crop to the whole photo, and close back into it.
   - name: zoom
-    title: Zoom and srcset
+    title: Zoom
     text: >-
-      A click, a double tap or the zoom button zooms a photo to its native width, at most three times the size it fits at. The native width comes from `data-dlb-width` or from the largest `w` in `data-dlb-srcset`, and the zoomed photo loads the larger file. Drag to pan.
+      A click, a double tap or the zoom button zooms a photo to its native width, at most three times the size it fits at. The native width comes from `data-dlb-width`, or from the large image once it has loaded. Drag to pan.
   - name: captions
     title: Captions
     text: >-

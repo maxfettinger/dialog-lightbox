@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+`data-dlb-srcset` is gone. The box always loads the file in `href`, and the native width for zooming comes from `data-dlb-width` or from that file once it has loaded.
+
 `[data-dlb-counter]` now gets only the current slide's number, "3", and a new `[data-dlb-total]` gets the number of slides, "16". A page that showed "3 / 16" in one element puts the slash between the two itself.
 
 The thumbnail stays visible while the box opens and closes. After closing by touch or mouse it gets focus back without a focus ring; after a key it keeps the ring.

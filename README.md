@@ -58,7 +58,7 @@ Each thumbnail links to its large file, so the page works without JavaScript too
 
 ```html
 <div class="gallery">
-  <a href="ferry-1600.webp" data-dlb-srcset="ferry-1080.webp 1080w, ferry-1600.webp 1600w">
+  <a href="ferry-1600.webp" data-dlb-width="1600" data-dlb-height="1067">
     <img src="ferry-480.webp" alt="The ferry at Kiel">
   </a>
   <a href="ride.mp4" data-dlb-type="video">
@@ -135,7 +135,6 @@ On the links:
 |---|---|
 | `href` | The large image or the video file |
 | `data-dlb-type="video"` | A video; the thumbnail is its poster |
-| `data-dlb-srcset` | `srcset` for the large image; its largest `w` is taken as the native width |
 | `data-dlb-width`, `data-dlb-height` | Native size, if you have it. Without them the thumbnail's aspect ratio is used |
 | `data-dlb-id` | A stable id for `#dlb=` links. Without it the id is `<gallery id>-<number>` |
 | `data-dlb-noaudio` | The video has no sound; the mute button is disabled |
