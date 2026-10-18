@@ -74,6 +74,12 @@ export function thumbStart(box: Rect, media: Size, cover: boolean): { rect: Rect
   };
 }
 
+/** The rectangle or insets `p` of the way from `a` to `b`, every number moving in a straight line. */
+export const mix = <T extends object>(a: T, b: T, p: number): T =>
+  Object.fromEntries(
+    Object.entries(a).map(([key, value]: [string, number]) => [key, value + ((b as never)[key] - value) * p]),
+  ) as T;
+
 /** How far a photo zooms: up to 3 times its fit size, never past its native width; null below 1.2. */
 export function zoomTarget(nativeWidth: number | undefined, fitWidth: number): number | null {
   if (!nativeWidth) return null;

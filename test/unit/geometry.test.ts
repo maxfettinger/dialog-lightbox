@@ -3,6 +3,7 @@ import {
   clampView,
   FIT_VIEW,
   fit,
+  mix,
   panBounds,
   thumbStart,
   viewRect,
@@ -62,6 +63,16 @@ describe("thumbStart", () => {
       rect: box,
       clip: { top: 0, right: 0, bottom: 0, left: 0 },
     });
+  });
+});
+
+describe("mix", () => {
+  test("moves every number the same share of the way", () => {
+    const a = { x: 0, y: 100, width: 150, height: 100 };
+    const b = { x: 0, y: 40, width: 390, height: 260 };
+    expect(mix(a, b, 0.5)).toEqual({ x: 0, y: 70, width: 270, height: 180 });
+    expect(mix(a, b, 0)).toEqual(a);
+    expect(mix(a, b, 1)).toEqual(b);
   });
 });
 
