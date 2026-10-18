@@ -226,6 +226,7 @@ dialog[data-dlb-loading]::after {
 
 - A CSS reset doesn't need undoing. Slide images, videos and their wrapper get `max-width: none` inline, so rules like `img { max-inline-size: 100% }` or `* { max-width: 100% }` don't stop the zoom.
 - The current slide holds two images: the thumbnail as a placeholder and, once it has loaded, the large image on top. In tests or CSS, `[data-dlb-current] img:last-of-type` is the large one.
+- iOS draws a grey box where a tap lands. The library's CSS turns it off inside the dialog; for the thumbnails, add `-webkit-tap-highlight-color: transparent` to your gallery links.
 - A video always starts from its first frame, and until it plays the slide shows the thumbnail. Make the first frame the thumbnail, or the picture jumps when playback starts.
 
 ## Gestures and keys

@@ -27,6 +27,8 @@
     padding: 0;
     border: 0;
     overscroll-behavior: contain;
+    /* No grey box on iOS where a tap lands; keyboard focus rings stay. */
+    -webkit-tap-highlight-color: transparent;
   }
 
   [data-dlb-viewport] {
