@@ -4,7 +4,7 @@ A lightweight lightbox on the native `<dialog>`: swipe, zoom, video. It adds beh
 
 Try it on the [demo site](https://dialog-lightbox.maxfettinger.com), ideally on a phone. It has an example for each feature, live with its code, and short docs.
 
-The script is about 9.5 kB gzipped and has no dependencies. You write the dialog, its buttons and every style yourself. The library finds the parts by their `data-dlb-*` attributes, adds the behavior, and reports its state as attributes your CSS can use.
+The script is about 9.6 kB gzipped and has no dependencies. You write the dialog, its buttons and every style yourself. The library finds the parts by their `data-dlb-*` attributes, adds the behavior, and reports its state as attributes your CSS can use.
 
 What it does:
 
@@ -16,11 +16,11 @@ What it does:
 
 ## Compared with other lightboxes
 
-Sizes are the files in each npm package compressed with gzip, measured on 15 October 2026 (ours on 18 October, for 0.2.0). Their CSS includes a theme; ours only does layout.
+Sizes are the files in each npm package compressed with gzip, measured on 15 October 2026 (ours on 18 October, for 0.3.0). Their CSS includes a theme; ours only does layout.
 
 | | Script + CSS | Native `<dialog>` | Video | Back button | License |
 |---|---|---|---|---|---|
-| dialog-lightbox | 9.5 + 0.4 kB | yes | video files | yes | MIT |
+| dialog-lightbox | 9.6 + 0.4 kB | yes | video files | yes | MIT |
 | [PhotoSwipe 5](https://photoswipe.com) | 20.9 + 2.4 kB | no | plugin | no | MIT |
 | [GLightbox](https://github.com/biati-digital/glightbox) | 15.3 + 2.6 kB | no | YouTube, Vimeo, files | no | MIT |
 | [lightGallery](https://www.lightgalleryjs.com) | 18.9 + 2.8 kB, plugins extra | no | plugin | plugin | GPLv3 or paid |
@@ -42,15 +42,15 @@ npm install dialog-lightbox
 A plain HTML page can load both files from the jsDelivr CDN, with no build step:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialog-lightbox@0.3/dist/dialog-lightbox.css" />
 <script type="module">
-  import { lightbox } from "https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.js";
+  import { lightbox } from "https://cdn.jsdelivr.net/npm/dialog-lightbox@0.3/dist/dialog-lightbox.js";
 
   lightbox({ gallery: document.querySelector(".gallery"), dialog: document.querySelector("dialog") });
 </script>
 ```
 
-`@0.2` gets the newest 0.2.x release. To host the files yourself, download [dialog-lightbox.js](https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.js) and [dialog-lightbox.css](https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.css) and put them next to your page.
+`@0.3` gets the newest 0.3.x release. To host the files yourself, download [dialog-lightbox.js](https://cdn.jsdelivr.net/npm/dialog-lightbox@0.3/dist/dialog-lightbox.js) and [dialog-lightbox.css](https://cdn.jsdelivr.net/npm/dialog-lightbox@0.3/dist/dialog-lightbox.css) and put them next to your page.
 
 ## Markup
 

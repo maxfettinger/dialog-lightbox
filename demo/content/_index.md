@@ -45,9 +45,9 @@ lightbox({ gallery: document.querySelector(".gallery"), dialog: document.querySe
 Without npm or a build step, load both files from jsDelivr:
 
 ```html {file="index.html"}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dialog-lightbox@0.3/dist/dialog-lightbox.css" />
 <script type="module">
-  import { lightbox } from "https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/dialog-lightbox.js";
+  import { lightbox } from "https://cdn.jsdelivr.net/npm/dialog-lightbox@0.3/dist/dialog-lightbox.js";
 
   lightbox({ gallery: document.querySelector(".gallery"), dialog: document.querySelector("dialog") });
 </script>

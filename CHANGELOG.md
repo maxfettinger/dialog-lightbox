@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 (2026-10-18)
+
+This release changes two attributes: the counter is split in two, and `data-dlb-srcset` is removed.
 
 `data-dlb-srcset` is gone. The box always loads the file in `href`, and the native width for zooming comes from `data-dlb-width` or from that file once it has loaded.
 
@@ -15,6 +17,8 @@ A looping gallery of two slides shows the other slide on both sides, so a swipe 
 `next()`, `prev()` and `goTo()` called while the box zooms open, for example right after `open()`, now wait for the zoom to end instead of being dropped. A touch or click during the opening zoom ends it at once and starts its gesture, so a quick swipe after opening changes the slide.
 
 When the last lightbox of a dialog is destroyed, `destroy()` also removes what the lightboxes wrote into the dialog: `data-dlb`, the viewport's `tabindex`, `--dlb-opacity`, the counter's text, and `disabled` and `aria-pressed` on the buttons.
+
+The script is about 9.6 kB gzipped, and the size check allows 12 kB.
 
 ## 0.2.0 (2026-10-18)
 

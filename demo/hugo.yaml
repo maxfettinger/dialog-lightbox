@@ -11,4 +11,4 @@ params:
   description: A small, typed lightbox on the native dialog element. Swipe, zoom and video for the photos you link to.
   repo: https://github.com/maxfettinger/dialog-lightbox
   # Where the example code on the site loads the library from; the live examples use the local build in /lib/.
-  cdn: https://cdn.jsdelivr.net/npm/dialog-lightbox@0.2/dist/
+  cdn: https://cdn.jsdelivr.net/npm/dialog-lightbox@0.3/dist/
