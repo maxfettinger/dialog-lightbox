@@ -81,3 +81,31 @@ test("arrow keys with a modifier are left to the browser", async ({ fixture: pag
   await page.waitForTimeout(400);
   await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 7");
 });
+
+test("arrow keys still work after an overlay button on the previous slide had focus", async ({
+  fixture: page,
+}) => {
+  await page.evaluate(() => {
+    const template = document.createElement("template");
+    template.setAttribute("data-dlb-overlay", "video");
+    template.innerHTML = '<button type="button" class="ov-play" data-dlb-play>Play</button>';
+    document.querySelector("dialog")!.append(template);
+  });
+  await openAt(page, "one", 3);
+  await page.locator("[data-dlb-current] .ov-play").click();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator("[data-dlb-counter]")).toHaveText("5 / 7");
+  await page.waitForTimeout(400);
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator("[data-dlb-counter]")).toHaveText("6 / 7");
+});
+
+test("arrow keys still work after the video was fullscreen", async ({ fixture: page }) => {
+  await openAt(page, "one", 3);
+  await page.locator("[data-dlb-fullscreen]").click();
+  await page.waitForFunction(() => document.fullscreenElement !== null);
+  await page.evaluate(() => document.exitFullscreen());
+  await page.waitForFunction(() => document.fullscreenElement === null);
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator("[data-dlb-counter]")).toHaveText("5 / 7");
+});

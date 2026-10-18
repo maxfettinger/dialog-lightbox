@@ -242,7 +242,9 @@ export function lightbox(options: LightboxOptions): Lightbox {
       },
       { signal },
     );
-    dialog.addEventListener("keydown", onKey, { signal });
+    // On the document: when a focused button disappears (an overlay on a slide that turned inert, the
+    // fullscreen player closing), focus falls back to the body, and the keys must still work.
+    document.addEventListener("keydown", onKey, { signal });
     dialog.addEventListener("dlbmove", () => dialog.toggleAttribute("data-dlb-moving", true), { signal });
     dialog.addEventListener("dlbsettle", settle, { signal });
     dialog.addEventListener(
