@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { expect, openAt, test } from "./helpers";
+import { drag, expect, openAt, test } from "./helpers";
 
 test.use({ reducedMotion: "no-preference" });
 
@@ -82,6 +82,12 @@ test("closing shrinks the visible frame in a straight line to the thumbnail", as
     expect(edges[0]).toBeGreaterThan(0);
     expect(edges[0]).toBeLessThan(1);
   }
+});
+
+test("a swipe that starts during the opening zoom still changes the slide", async ({ fixture: page }) => {
+  await page.evaluate(() => document.querySelector<HTMLAnchorElement>("#one a")!.click());
+  await drag(page, [300, 400], [40, 400]);
+  await expect(page.locator(".count")).toHaveText("2 / 7");
 });
 
 test("after opening the backdrop is fully opaque", async ({ fixture: page }) => {

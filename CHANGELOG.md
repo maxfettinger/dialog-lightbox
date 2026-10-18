@@ -10,7 +10,7 @@ The opening and closing zoom run on springs close to the ones of Lightbox3, and 
 
 A looping gallery of two slides shows the other slide on both sides, so a swipe to the right no longer shows empty space.
 
-`next()`, `prev()` and `goTo()` called while the box zooms open, for example right after `open()`, now wait for the zoom to end instead of being dropped.
+`next()`, `prev()` and `goTo()` called while the box zooms open, for example right after `open()`, now wait for the zoom to end instead of being dropped. A touch or click during the opening zoom ends it at once and starts its gesture, so a quick swipe after opening changes the slide.
 
 When the last lightbox of a dialog is destroyed, `destroy()` also removes what the lightboxes wrote into the dialog: `data-dlb`, the viewport's `tabindex`, `--dlb-opacity`, the counter's text, and `disabled` and `aria-pressed` on the buttons.
 
