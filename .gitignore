@@ -16,4 +16,9 @@ playwright-report/
 
 # Executing-plans workspace
 .superpowers/
-site
+# Demo site build output (Hugo) and the library copied into it
+site/
+demo/static/lib/
+demo/resources/
+demo/public/
+demo/.hugo_build.lock

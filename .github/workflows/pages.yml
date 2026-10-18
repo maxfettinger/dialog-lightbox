@@ -25,6 +25,10 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.3
+      # The demo site is built with Hugo; the browser tests open it too.
+      - uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.167.0"
       - run: bun install --frozen-lockfile
       - run: bun run build:demo
       - uses: actions/upload-pages-artifact@v4

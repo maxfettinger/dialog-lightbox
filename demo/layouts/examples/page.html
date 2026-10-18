@@ -1,0 +1,34 @@
+{{- /* An example: the files in assets/examples/<name>/ run on the page and are shown, highlighted, below it.
+       The code on screen loads the released library from the CDN; the page runs the local build in /lib/. */ -}}
+
+{{ define "head" }}
+  {{- with resources.Get (printf "examples/%s/style.css" .File.ContentBaseName) }}
+    <style>{{ .Content | safeCSS }}</style>
+  {{- end }}
+{{ end }}
+
+{{ define "main" }}
+  {{- $dir := printf "examples/%s/" .File.ContentBaseName }}
+  {{- $html := resources.Get (print $dir "example.html") }}
+  {{- $css := resources.Get (print $dir "style.css") }}
+  {{- $js := resources.Get (print $dir "script.js") }}
+  {{- $cdn := site.Params.cdn }}
+  <h1>{{ .Title }}</h1>
+  <p class="lead">{{ .Params.lead }}</p>
+  {{ .Content }}
+  <div class="example{{ if .Params.wide }} example-wide{{ end }}">
+    {{ $html.Content | safeHTML }}
+  </div>
+  <h2>HTML</h2>
+  {{ transform.Highlight (printf "<link rel=\"stylesheet\" href=\"%sdialog-lightbox.css\" />\n\n%s" $cdn $html.Content) "html" }}
+  {{- with $css }}
+    <h2>CSS</h2>
+    {{ transform.Highlight .Content "css" }}
+  {{- end }}
+  <h2>JavaScript</h2>
+  {{ transform.Highlight (replace $js.Content "/lib/" $cdn) "js" }}
+  {{- with .Params.next }}
+    <p class="next">Next: <a href="{{ (site.GetPage .).RelPermalink }}">{{ (site.GetPage .).Title }}</a></p>
+  {{- end }}
+  <script type="module">{{ $js.Content | safeJS }}</script>
+{{ end }}

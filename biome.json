@@ -18,7 +18,15 @@
     }
   },
   "files": {
-    "includes": ["**", "!test/browser/media"]
+    "includes": [
+      "**",
+      "!test/browser/media",
+      "!demo/layouts",
+      "!demo/public",
+      "!demo/static/lib",
+      "!demo/resources",
+      "!site"
+    ]
   },
   "overrides": [
     {

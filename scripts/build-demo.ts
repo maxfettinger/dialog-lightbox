@@ -1,10 +1,20 @@
-// Builds the demo site into site/: the files in demo/ as they are, plus the built library in site/lib/, which
-// the pages load. Run after `bun run build`.
-import { cp, mkdir, rm } from "node:fs/promises";
+// The demo site (demo/, Hugo). It runs the library from demo/static/lib, which this script fills from dist/.
+//   bun scripts/build-demo.ts           builds the site into site/ (after `bun run build`)
+//   bun scripts/build-demo.ts --serve   Hugo's dev server on port 1314, with the library rebuilt from src/ on change
+import { cp, mkdir } from "node:fs/promises";
+import { $ } from "bun";
 
-await rm("site", { recursive: true, force: true });
-await cp("demo", "site", { recursive: true });
-await mkdir("site/lib");
-for (const name of ["dialog-lightbox.js", "dialog-lightbox.css"])
-  await cp(`dist/${name}`, `site/lib/${name}`);
-console.log("Demo site in site/");
+await mkdir("demo/static/lib", { recursive: true });
+await cp("src/dialog-lightbox.css", "demo/static/lib/dialog-lightbox.css");
+
+if (process.argv.includes("--serve")) {
+  const lib = ["build", "./src/index.ts", "--target=browser", "--outfile=demo/static/lib/dialog-lightbox.js"];
+  await $`bun ${lib}`.quiet();
+  Bun.spawn(["bun", ...lib, "--watch"], { stdout: "ignore" });
+  await $`hugo server --source demo --bind 0.0.0.0 --baseURL / --port 1314 --renderToMemory`;
+} else {
+  await cp("dist/dialog-lightbox.js", "demo/static/lib/dialog-lightbox.js");
+  await cp("dist/dialog-lightbox.css", "demo/static/lib/dialog-lightbox.css");
+  await $`hugo --source demo --destination ${process.cwd()}/site --minify --quiet --cleanDestinationDir`;
+  console.log("Demo site in site/");
+}

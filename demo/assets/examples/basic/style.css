@@ -1,0 +1,141 @@
+/* Square thumbnails; the box still opens from them, uncropped */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+/* The box: white on black, fading in with the photo */
+.box {
+  background: transparent;
+  color: white;
+}
+
+.box::backdrop {
+  background: rgb(0 0 0 / calc(var(--dlb-opacity) * 0.92));
+}
+
+/* Room above for the counter and buttons, below for the caption */
+.box [data-dlb-viewport] {
+  padding: 3rem 0 4rem;
+}
+
+.box-top,
+.box-bottom {
+  position: absolute;
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  transition: opacity 0.2s;
+}
+
+.box-top {
+  top: 0;
+}
+
+.box-bottom {
+  bottom: 0;
+  flex-direction: column;
+}
+
+[data-dlb-counter] {
+  margin-right: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.box button {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 1.25rem;
+  background: rgb(255 255 255 / 0.15);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.box button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.box-side {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+}
+
+[data-dlb-prev] {
+  left: 1rem;
+}
+
+[data-dlb-next] {
+  right: 1rem;
+}
+
+.box-caption {
+  margin: 0;
+  text-align: center;
+}
+
+/* Video controls only on videos. The buttons show what they do; screen readers hear
+   "Play" and "Mute" with aria-pressed, which the library sets */
+.box-video {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: min(100%, 24rem);
+}
+
+.box:not([data-dlb-type="video"]) .box-video {
+  display: none;
+}
+
+.box [data-dlb-play]::after {
+  content: "Pause";
+}
+
+.box[data-dlb-paused] [data-dlb-play]::after {
+  content: "Play";
+}
+
+.box [data-dlb-mute]::after {
+  content: "Sound off";
+}
+
+.box[data-dlb-muted] [data-dlb-mute]::after {
+  content: "Sound on";
+}
+
+[data-dlb-progress] {
+  flex: 1;
+  height: 3px;
+  background:
+    linear-gradient(white, white) left / calc(var(--dlb-progress, 0) * 100%) 100% no-repeat,
+    rgb(255 255 255 / 0.3);
+}
+
+/* A tap on a photo hides the buttons; touch screens swipe instead of using the side buttons */
+.box[data-dlb-ui-hidden] :is(.box-top, .box-bottom, .box-side) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  .box-side {
+    display: none;
+  }
+}

@@ -28,7 +28,7 @@ export default defineConfig({
     { name: "firefox", use: { browserName: "firefox" } },
   ],
   webServer: {
-    command: "bun scripts/serve.ts --port 3123",
+    command: "bun run build:demo && bun scripts/serve.ts --port 3123",
     url: "http://localhost:3123/test/browser/",
     reuseExistingServer: !process.env.CI,
   },
