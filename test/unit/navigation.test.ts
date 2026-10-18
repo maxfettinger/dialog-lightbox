@@ -37,7 +37,8 @@ describe("neighbours", () => {
     expect(neighbours(2, 3, false)).toEqual([1, 2, null]);
   });
 
-  test("two looping slides: the other one appears once, as next", () => {
-    expect(neighbours(0, 2, true)).toEqual([null, 0, 1]);
+  test("two looping slides: the other one is on both sides", () => {
+    expect(neighbours(0, 2, true)).toEqual([1, 0, 1]);
+    expect(neighbours(1, 2, true)).toEqual([0, 1, 0]);
   });
 });

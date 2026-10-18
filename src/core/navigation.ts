@@ -8,13 +8,13 @@ export function step(index: number, delta: number, count: number, loop: boolean)
   return ((target % count) + count) % count;
 }
 
-/** Previous, current and next index. With two looping slides the other one appears once, as next. */
-export function neighbours(
+/** Previous, current and next index. With two looping slides the other one is on both sides. */
+export const neighbours = (
   index: number,
   count: number,
   loop: boolean,
-): [number | null, number, number | null] {
-  const prev = step(index, -1, count, loop);
-  const next = step(index, 1, count, loop);
-  return [prev === next ? null : prev, index, next];
-}
+): [number | null, number, number | null] => [
+  step(index, -1, count, loop),
+  index,
+  step(index, 1, count, loop),
+];
