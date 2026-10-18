@@ -82,7 +82,7 @@ One dialog serves every gallery on a page:
   <div class="video-bar">
     <button data-dlb-play aria-label="Play">…</button>
     <span data-dlb-progress></span>
-    <button data-dlb-mute aria-label="Mute">…</button>
+    <button data-dlb-mute aria-label="Sound off">…</button>
   </div>
   <p class="caption"></p>
 </dialog>
@@ -147,7 +147,7 @@ Inside the dialog:
 | `[data-dlb-viewport]` | Required. The slides go here, gestures start here, and its padding is the room the photo leaves free |
 | `[data-dlb-close]`, `[data-dlb-prev]`, `[data-dlb-next]`, `[data-dlb-zoom]` | Buttons; disabled where they can't act |
 | `[data-dlb-counter]`, `[data-dlb-total]` | The counter gets the slide's number, "3", and the total gets the number of slides, "16" |
-| `[data-dlb-play]`, `[data-dlb-mute]` | Video buttons; `aria-pressed` is true while playing or muted, so label them "Play" and "Mute" |
+| `[data-dlb-play]`, `[data-dlb-mute]` | Video buttons; `aria-pressed` is true while playing or muted, so label them "Play" and "Sound off" |
 | `[data-dlb-fullscreen]` | Opens the video in the browser's own fullscreen player, with native controls; on iPhone that is Apple's player. Time, pause and sound carry over both ways. Disabled on photos |
 | `[data-dlb-progress]` | Gets `--dlb-progress` from 0 to 1 while a video plays |
 | `<template data-dlb-overlay>` | Copied over the media of each slide as `<div data-dlb-overlay>` (select the copies with `div[data-dlb-overlay]`, since the template has the attribute too), which covers exactly the photo or video and moves, swipes and shrinks with it. `data-dlb-overlay="video"` or `"image"` limits it to one slide type, and you can have one template of each. The buttons and progress bars above work inside it too |
