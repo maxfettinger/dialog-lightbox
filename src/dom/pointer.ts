@@ -167,7 +167,12 @@ export function bindPointer(
   };
 
   const onPointer = (event: PointerEvent): void => {
-    if (s.busy || s.closing) return;
+    if (s.closing || (s.busy && event.type !== "pointerdown")) return;
+    if (s.busy) {
+      // A finger during the opening zoom: the zoom ends at once and the gesture starts from there.
+      for (const animation of dialog.getAnimations({ subtree: true })) animation.finish();
+      s.busy = false;
+    }
     const x = event.clientX - s.origin.x;
     const y = event.clientY - s.origin.y;
     const kind: PointerKind =
