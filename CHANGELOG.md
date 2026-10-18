@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.1 (2026-10-18)
 
 After closing, the thumbnail gets focus back without a focus ring, also after Escape or another key.
 
