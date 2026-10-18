@@ -1,6 +1,6 @@
 {
   "name": "dialog-lightbox",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A lightweight lightbox on the native <dialog>: swipe, zoom, video. It adds behavior; the markup and CSS stay yours.",
   "keywords": [
     "lightbox",
