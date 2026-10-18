@@ -37,13 +37,13 @@ test("a #dlb= link in the text opens its slide", async ({ page }) => {
   await page.goto("/examples/");
   await page.locator('a[href="#dlb=north-cape"]').click();
   await expect(page.locator("dialog.box")).toHaveAttribute("open", "");
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("2 / 2");
+  await expect(page.locator(".box-count")).toHaveText("2 / 2");
 });
 
 test("the API example opens the last photo and logs the events", async ({ page }) => {
   await page.goto("/examples/");
   await page.locator(".open-last").click();
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("3 / 3");
+  await expect(page.locator(".box-count")).toHaveText("3 / 3");
   await expect(page.locator(".log")).toContainText("open   slide 3 of 3");
 });
 

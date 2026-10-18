@@ -20,14 +20,14 @@ test("closing with the button removes the hash again", async ({ fixture: page })
 test("a URL with #dlb=<id> opens that slide", async ({ page }) => {
   await page.goto("/test/browser/#dlb=one-2");
   await expect(page.locator("dialog")).toHaveAttribute("open", "");
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("2 / 7");
+  await expect(page.locator(".count")).toHaveText("2 / 7");
   await page.locator("[data-dlb-close]").click();
   await expect(page).toHaveURL(/\/test\/browser\/$/);
 });
 
 test("history: false leaves the URL alone", async ({ fixture: page }) => {
   await openAt(page, "three", 0);
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 1");
+  await expect(page.locator(".count")).toHaveText("1 / 1");
   await expect(page).not.toHaveURL(/#dlb=/);
 });
 
@@ -63,7 +63,7 @@ test("changing the hash to #dlb=<id> opens that slide on a page that is already 
     location.hash = "#dlb=one-2";
   });
   await expect(page.locator("dialog")).toHaveAttribute("open", "");
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("2 / 7");
+  await expect(page.locator(".count")).toHaveText("2 / 7");
   // The hash change was the navigation: back leaves the box and the hash.
   await page.goBack();
   await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
@@ -77,7 +77,7 @@ test("changing the hash while the box is open moves to that slide, and a hash wi
   await page.evaluate(() => {
     location.hash = "#dlb=one-2";
   });
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("2 / 7");
+  await expect(page.locator(".count")).toHaveText("2 / 7");
   await page.evaluate(() => {
     location.hash = "#top";
   });
@@ -106,7 +106,7 @@ test("a hash change after the box has settled moves within it and keeps it open"
     }, hash);
     await page.waitForTimeout(500);
     await expect(page.locator("dialog")).toHaveAttribute("open", "");
-    await expect(page.locator("[data-dlb-counter]")).toHaveText(counter);
+    await expect(page.locator(".count")).toHaveText(counter);
   }
 });
 
@@ -116,7 +116,7 @@ test("closing after a hash change does not reopen the box", async ({ fixture: pa
   await page.evaluate(() => {
     location.hash = "#dlb=one-2";
   });
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("2 / 7");
+  await expect(page.locator(".count")).toHaveText("2 / 7");
   await page.locator("[data-dlb-close]").click();
   await page.waitForTimeout(600);
   await expect(page.locator("dialog")).not.toHaveAttribute("open", "");
@@ -131,5 +131,5 @@ test("a #dlb= id of another gallery leaves the open box alone", async ({ fixture
   });
   await page.waitForTimeout(500);
   await expect(page.locator("dialog")).toHaveAttribute("open", "");
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 7");
+  await expect(page.locator(".count")).toHaveText("1 / 7");
 });

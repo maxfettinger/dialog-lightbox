@@ -4,8 +4,16 @@ import { expect, openAt, test } from "./helpers";
 test("a click on a thumbnail opens its slide", async ({ fixture: page }) => {
   await openAt(page, "one", 0);
   await expect(page.locator("dialog")).toHaveAttribute("data-dlb-type", "image");
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 7");
+  await expect(page.locator(".count")).toHaveText("1 / 7");
   expect(await page.evaluate(() => window.log)).toEqual(["open:wide", "change:wide"]);
+});
+
+test("the counter gets the slide's number and the total element the number of slides", async ({
+  fixture: page,
+}) => {
+  await openAt(page, "one", 2);
+  await expect(page.locator("[data-dlb-counter]")).toHaveText("3");
+  await expect(page.locator("[data-dlb-total]")).toHaveText("7");
 });
 
 test("the thumbnail shows at once and the large image lies over it once decoded", async ({
@@ -38,7 +46,7 @@ test("without width and height the size comes from the thumbnail", async ({ fixt
 
 test("a link without a thumbnail opens once its image has loaded", async ({ fixture: page }) => {
   await openAt(page, "three", 0);
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 1");
+  await expect(page.locator(".count")).toHaveText("1 / 1");
   const media = page.locator("[data-dlb-current] > div");
   await expect(media).toBeVisible();
   // square.svg is 1000 × 1000 and fits 390 wide.

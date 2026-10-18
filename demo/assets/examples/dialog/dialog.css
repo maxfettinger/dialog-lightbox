@@ -49,7 +49,7 @@
 }
 
 /* "3 / 16" pushes the buttons to the right */
-.box [data-dlb-counter] {
+.box-count {
   margin-right: auto;
 }
 
