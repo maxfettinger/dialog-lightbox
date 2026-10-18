@@ -180,17 +180,11 @@ test.describe("on a phone, on a page wider than the screen", () => {
   });
 
   test("the box fits the screen after panning sideways", async ({ fixture: page, browserName }) => {
-    test.skip(browserName !== "chromium", "panning by touch needs the DevTools protocol");
+    test.skip(browserName === "webkit", "mobile WebKit doesn't scroll by mouse wheel");
     await widen(page);
-    const cdp = await page.context().newCDPSession(page);
-    await cdp.send("Input.synthesizeScrollGesture", {
-      x: 300,
-      y: 400,
-      xDistance: -210,
-      yDistance: 0,
-      gestureSourceType: "touch",
-    });
-    expect(await page.evaluate(() => visualViewport!.offsetLeft)).toBe(210);
+    await page.mouse.move(300, 400);
+    await page.mouse.wheel(210, 0);
+    await expect.poll(() => page.evaluate(() => visualViewport!.offsetLeft)).toBe(210);
     // A click from script, so Playwright doesn't scroll the link into view first.
     await page
       .locator("#one a")
