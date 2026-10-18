@@ -4,7 +4,7 @@
 
 `[data-dlb-counter]` now gets only the current slide's number, "3", and a new `[data-dlb-total]` gets the number of slides, "16". A page that showed "3 / 16" in one element puts the slash between the two itself.
 
-The thumbnail stays visible while the box opens and closes.
+The thumbnail stays visible while the box opens and closes. After closing by touch or mouse it gets focus back without a focus ring; after a key it keeps the ring.
 
 The opening and closing zoom run on springs close to the ones of Lightbox3, and the visible frame grows in a straight line from the thumbnail's box to the photo, so a cropped thumbnail opens up evenly instead of late. The zoom button, the fades and the backdrop use the same springs: zooming in and opening at one speed, zooming out and closing a little faster.
 

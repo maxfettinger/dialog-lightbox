@@ -73,6 +73,8 @@ export function lightbox(options: LightboxOptions): Lightbox {
     close: new Set(),
   };
   let s: Session | null = null;
+  /** A key was pressed since the box opened: closing then shows the focus ring on the thumbnail. */
+  let keyed = false;
   /** Moves asked for during the opening animation, made once it ends. */
   const queue: (() => void)[] = [];
   const video = createVideo(() => sync(), life.signal);
@@ -176,6 +178,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
   }
 
   function onKey(event: KeyboardEvent): void {
+    keyed = true;
     if (!s || s.closing || event.altKey || event.metaKey || event.ctrlKey) return;
     const target = event.target instanceof Element ? event.target : null;
     if (target?.closest("input, select, textarea")) return;
@@ -209,6 +212,7 @@ export function lightbox(options: LightboxOptions): Lightbox {
       if (type !== "image") overlays.video ??= template;
     }
     queue.length = 0;
+    keyed = false;
     const session = createSession(slides, index, loop, viewport, overlays);
     s = session;
     session.busy = true;
@@ -317,7 +321,9 @@ export function lightbox(options: LightboxOptions): Lightbox {
     for (const name of ["x", "y", "width", "height"]) dialog.style.removeProperty(`--dlb-media-${name}`);
     if (dialog.open) dialog.close();
     const slide = current(session);
-    slide.data.link.focus({ preventScroll: true });
+    // Firefox may have focused the link already when the dialog closed; blur() lets focusVisible apply.
+    slide.data.link.blur();
+    slide.data.link.focus({ preventScroll: true, focusVisible: keyed });
     emit("close", slide.data);
   }
 

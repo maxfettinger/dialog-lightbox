@@ -62,6 +62,21 @@ test("the close button closes and focus returns to the thumbnail", async ({ fixt
   expect(await page.evaluate(() => window.log)).toEqual(["open:wide", "change:wide", "close:wide"]);
 });
 
+test("after a tap on close the thumbnail gets focus without a focus ring, after Escape with one", async ({
+  fixture: page,
+}) => {
+  const ring = (): Promise<boolean> =>
+    page.evaluate(() => document.querySelector("#one a")!.matches(":focus-visible"));
+  await page.locator("#one a").first().tap();
+  await page.locator("[data-dlb-close]").tap();
+  await expect(page.locator("#one a").first()).toBeFocused();
+  expect(await ring()).toBe(false);
+  await page.locator("#one a").first().tap();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#one a").first()).toBeFocused();
+  expect(await ring()).toBe(true);
+});
+
 test("Escape closes", async ({ fixture: page }) => {
   await openAt(page, "one", 0);
   await page.keyboard.press("Escape");
