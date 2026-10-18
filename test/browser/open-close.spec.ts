@@ -77,6 +77,16 @@ test("after a tap on close the thumbnail gets focus without a focus ring, after 
   expect(await ring()).toBe(true);
 });
 
+test("a tap on close after an arrow key returns focus without a ring", async ({ fixture: page }) => {
+  await page.locator("#one a").first().tap();
+  await page.keyboard.press("ArrowRight");
+  await page.locator("[data-dlb-close]").tap();
+  await expect(page.locator("#one a").nth(1)).toBeFocused();
+  expect(await page.evaluate(() => document.querySelectorAll("#one a")[1]!.matches(":focus-visible"))).toBe(
+    false,
+  );
+});
+
 test("Escape closes", async ({ fixture: page }) => {
   await openAt(page, "one", 0);
   await page.keyboard.press("Escape");
