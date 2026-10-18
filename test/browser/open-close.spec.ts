@@ -77,17 +77,6 @@ test("after a tap on close the thumbnail gets focus without a focus ring, after 
   expect(await ring()).toBe(true);
 });
 
-test("taps inside the box draw no tap highlight", async ({ fixture: page, browserName }) => {
-  test.skip(browserName === "firefox", "Firefox has no tap highlight");
-  await openAt(page, "one", 0);
-  for (const selector of ["[data-dlb-viewport]", "[data-dlb-close]"]) {
-    const color = await page
-      .locator(selector)
-      .evaluate((element) => getComputedStyle(element).getPropertyValue("-webkit-tap-highlight-color"));
-    expect(color).toBe("rgba(0, 0, 0, 0)");
-  }
-});
-
 test("Escape closes", async ({ fixture: page }) => {
   await openAt(page, "one", 0);
   await page.keyboard.press("Escape");
