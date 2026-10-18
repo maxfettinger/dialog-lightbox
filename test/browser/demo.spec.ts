@@ -113,7 +113,8 @@ test("a chapter link scrolls there smoothly, unless the reader asks for less mot
   );
   expect(early).toBeGreaterThan(0);
   expect(early).toBeLessThan(end - 50);
-  await expect.poll(() => page.evaluate(() => scrollY)).toBeCloseTo(end, 0);
+  // Within 2 px: Firefox can round the end of a smooth scroll differently from a jump.
+  await expect.poll(() => page.evaluate((end) => Math.abs(scrollY - end), end)).toBeLessThanOrEqual(2);
   await expect(page).toHaveURL(/#javascript$/);
 });
 
