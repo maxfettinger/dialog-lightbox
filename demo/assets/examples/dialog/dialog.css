@@ -101,11 +101,11 @@
 }
 
 .box [data-dlb-mute]::after {
-  content: "Mute";
+  content: "Sound off";
 }
 
 .box[data-dlb-muted] [data-dlb-mute]::after {
-  content: "Sound";
+  content: "Sound on";
 }
 
 .box [data-dlb-fullscreen] {
