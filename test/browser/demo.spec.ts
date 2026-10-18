@@ -53,6 +53,20 @@ test("code blocks are labelled and import the package by name", async ({ page })
   await expect(page.locator("#cropped .code pre").last()).toContainText('from "dialog-lightbox"');
 });
 
+test("on a wide screen the docs list their chapters beside the text and mark the one being read", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/docs/");
+  const toc = page.locator(".toc");
+  await expect(toc.locator("a")).toHaveCount(6);
+  const [list, title] = [await toc.boundingBox(), await page.locator("h1").boundingBox()];
+  expect(list!.x + list!.width).toBeLessThan(title!.x);
+  await toc.locator('a[href="#javascript"]').click();
+  await expect(toc.locator("a[aria-current]")).toHaveText("JavaScript");
+  await expect(toc).toBeInViewport();
+});
+
 test("the docs page has its tables and labelled code", async ({ page }) => {
   const errors = noErrors(page);
   await page.goto("/docs/");

@@ -110,6 +110,7 @@ h2 {
   padding-top: 1rem;
   border-top: 1px solid var(--line);
   font-size: 1.25rem;
+  scroll-margin-top: 1rem;
 }
 
 h3 {
@@ -249,7 +250,7 @@ th {
   border-radius: 0.2rem;
 }
 
-/* Docs and examples: the sections of the page */
+/* Docs and examples: the sections of the page, in a row above the text */
 .toc ul {
   display: flex;
   flex-wrap: wrap;
@@ -259,6 +260,78 @@ th {
   border-block: 1px solid var(--line);
   list-style: none;
   font: 0.85rem / 1.5 var(--mono);
+}
+
+.toc-title {
+  display: none;
+}
+
+/* On wide screens the docs' chapters move into a sidebar that stays in view, and the page widens for it */
+@media (min-width: 64rem) {
+  body:has(.with-toc) {
+    --width: 70rem;
+  }
+
+  .with-toc {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    grid-template-areas: "toc head" "toc body";
+    column-gap: 3rem;
+  }
+
+  .with-toc .page-head {
+    grid-area: head;
+  }
+
+  .with-toc .page-body {
+    grid-area: body;
+  }
+
+  .with-toc .toc {
+    grid-area: toc;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-height: 100dvh;
+    overflow-y: auto;
+    padding-block: 2.5rem 1.5rem;
+  }
+
+  .toc-title {
+    display: block;
+    margin: 0 0 0.75rem;
+    color: var(--muted);
+    font: 600 0.72rem / 1.4 var(--mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .with-toc .toc ul {
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .with-toc .toc a {
+    display: block;
+    margin-left: -1px;
+    padding: 0.3rem 0 0.3rem 0.9rem;
+    border-left: 2px solid transparent;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .with-toc .toc a:hover {
+    color: var(--text);
+  }
+
+  .with-toc .toc a[aria-current] {
+    border-left-color: var(--accent);
+    color: var(--text);
+  }
 }
 
 /* A live example, framed and labelled */
