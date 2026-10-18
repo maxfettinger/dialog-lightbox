@@ -53,7 +53,7 @@ test("closing scrolls the current thumbnail into view first", async ({ fixture: 
   await openAt(page, "one", 0);
   await settled(page);
   await page.evaluate(() => window.boxes[0]!.goTo(6));
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("7 / 7");
+  await expect(page.locator(".count")).toHaveText("7 / 7");
   const link = page.locator("#one a").nth(6);
   expect((await link.boundingBox())!.x).toBeGreaterThan(390);
   await page.keyboard.press("Escape");

@@ -48,7 +48,7 @@ test("sound stays on for the next video", async ({ fixture: page }) => {
   await openAt(page, "one", 3);
   await page.locator("[data-dlb-mute]").click();
   await page.locator("[data-dlb-next]").click();
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("5 / 7");
+  await expect(page.locator(".count")).toHaveText("5 / 7");
   expect(await page.locator("[data-dlb-current] video").evaluate((v: HTMLVideoElement) => v.muted)).toBe(
     false,
   );
@@ -64,7 +64,7 @@ test("leaving the video releases it", async ({ fixture: page }) => {
   await openAt(page, "one", 3);
   await expect(page.locator("[data-dlb-current] video")).toHaveCount(1);
   await page.locator("[data-dlb-prev]").click();
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("3 / 7");
+  await expect(page.locator(".count")).toHaveText("3 / 7");
   await expect(page.locator("video")).toHaveCount(0);
   expect(await page.evaluate(() => window.boxes[0]!.video.hasAttribute("src"))).toBe(false);
 });
@@ -124,6 +124,6 @@ test("the fullscreen button is disabled on photos", async ({ fixture: page }) =>
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("ArrowRight");
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("4 / 7");
+  await expect(page.locator(".count")).toHaveText("4 / 7");
   await expect(page.locator("[data-dlb-fullscreen]")).toBeEnabled();
 });

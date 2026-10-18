@@ -74,7 +74,7 @@ One dialog serves every gallery on a page:
 ```html
 <dialog aria-label="Photo viewer">
   <div data-dlb-viewport></div>
-  <span data-dlb-counter></span>
+  <p><span data-dlb-counter></span> / <span data-dlb-total></span></p>
   <button data-dlb-zoom aria-label="Zoom">…</button>
   <button data-dlb-close aria-label="Close">…</button>
   <button data-dlb-prev aria-label="Previous">…</button>
@@ -146,7 +146,7 @@ Inside the dialog:
 |---|---|
 | `[data-dlb-viewport]` | Required. The slides go here, gestures start here, and its padding is the room the photo leaves free |
 | `[data-dlb-close]`, `[data-dlb-prev]`, `[data-dlb-next]`, `[data-dlb-zoom]` | Buttons; disabled where they can't act |
-| `[data-dlb-counter]` | Gets "3 / 16" |
+| `[data-dlb-counter]`, `[data-dlb-total]` | The counter gets the slide's number, "3", and the total gets the number of slides, "16" |
 | `[data-dlb-play]`, `[data-dlb-mute]` | Video buttons; `aria-pressed` is true while playing or muted, so label them "Play" and "Mute" |
 | `[data-dlb-fullscreen]` | Opens the video in the browser's own fullscreen player, with native controls; on iPhone that is Apple's player. Time, pause and sound carry over both ways. Disabled on photos |
 | `[data-dlb-progress]` | Gets `--dlb-progress` from 0 to 1 while a video plays |

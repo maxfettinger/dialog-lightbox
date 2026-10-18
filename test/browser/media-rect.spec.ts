@@ -31,7 +31,7 @@ test("the rectangle follows a zoom and a slide change", async ({ fixture: page }
   expect(reported[2]).toBe(1170);
   await page.locator("[data-dlb-zoom]").click();
   await drag(page, [300, 400], [60, 400]);
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("2 / 7");
+  await expect(page.locator(".count")).toHaveText("2 / 7");
   ({ reported, actual } = await rects(page));
   expect(reported).toEqual(actual);
 });

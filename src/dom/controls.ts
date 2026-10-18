@@ -1,7 +1,18 @@
 // The page's own buttons and outputs in the dialog, found by data-dlb-* attributes, and the state
 // attributes the page styles with.
 
-const NAMES = ["close", "prev", "next", "zoom", "counter", "play", "mute", "progress", "fullscreen"] as const;
+const NAMES = [
+  "close",
+  "prev",
+  "next",
+  "zoom",
+  "counter",
+  "total",
+  "play",
+  "mute",
+  "progress",
+  "fullscreen",
+] as const;
 
 export type Controls = Record<(typeof NAMES)[number], HTMLElement[]>;
 
@@ -45,7 +56,8 @@ export function render(dialog: HTMLDialogElement, controls: Controls, ui: UiStat
     noaudio: ui.noaudio,
   };
   for (const [name, on] of Object.entries(flags)) dialog.toggleAttribute(`data-dlb-${name}`, on);
-  for (const counter of controls.counter) counter.textContent = `${ui.index + 1} / ${ui.count}`;
+  for (const counter of controls.counter) counter.textContent = String(ui.index + 1);
+  for (const total of controls.total) total.textContent = String(ui.count);
   disable(controls.prev, ui.first);
   disable(controls.next, ui.last);
   disable(controls.zoom, !ui.zoomable);

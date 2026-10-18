@@ -6,25 +6,25 @@ const middle: [number, number] = [195, 412];
 test("swiping left goes to the next slide", async ({ fixture: page }) => {
   await openAt(page, "one", 0);
   await drag(page, [300, 412], [80, 412]);
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("2 / 7");
+  await expect(page.locator(".count")).toHaveText("2 / 7");
 });
 
 test("a short slow drag springs back", async ({ fixture: page }) => {
   await openAt(page, "one", 0);
   await drag(page, [200, 412], [170, 412], 600);
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 7");
+  await expect(page.locator(".count")).toHaveText("1 / 7");
 });
 
 test("a quick short flick changes the slide", async ({ fixture: page }) => {
   await openAt(page, "one", 0);
   await drag(page, [250, 412], [200, 412], 40);
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("2 / 7");
+  await expect(page.locator(".count")).toHaveText("2 / 7");
 });
 
 test("swiping right on the first slide springs back", async ({ fixture: page }) => {
   await openAt(page, "one", 0);
   await drag(page, [80, 412], [300, 412]);
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 7");
+  await expect(page.locator(".count")).toHaveText("1 / 7");
 });
 
 test("dragging down closes", async ({ fixture: page }) => {
@@ -83,7 +83,7 @@ test("dragging a zoomed photo pans it", async ({ fixture: page }) => {
   const before = (await media.boundingBox())!.x;
   await drag(page, [195, 412], [95, 412], 300);
   await expect.poll(async () => (await media.boundingBox())!.x).toBeLessThan(before - 50);
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 7");
+  await expect(page.locator(".count")).toHaveText("1 / 7");
 });
 
 test("at the edge of a zoomed photo a drag goes on to the next slide", async ({ fixture: page }) => {
@@ -91,9 +91,9 @@ test("at the edge of a zoomed photo a drag goes on to the next slide", async ({ 
   await page.locator("[data-dlb-zoom]").click();
   // The first drag pans past the right edge and springs back onto it.
   await drag(page, [300, 412], [20, 412], 300);
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 7");
+  await expect(page.locator(".count")).toHaveText("1 / 7");
   await drag(page, [300, 412], [80, 412]);
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("2 / 7");
+  await expect(page.locator(".count")).toHaveText("2 / 7");
 });
 
 test("a tap on a video pauses it", async ({ fixture: page }) => {
@@ -120,5 +120,5 @@ test("a second finger cancels a swipe", async ({ fixture: page }) => {
     fire("pointerup", 1, 160);
     fire("pointerup", 2, 100);
   });
-  await expect(page.locator("[data-dlb-counter]")).toHaveText("1 / 7");
+  await expect(page.locator(".count")).toHaveText("1 / 7");
 });
