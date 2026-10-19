@@ -1,0 +1,22 @@
+/* A row of thumbnails, 7rem high */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.row img {
+  display: block;
+  width: auto;
+  height: 7rem;
+}
+
+.log {
+  min-height: 6.5em;
+  max-height: 10em;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  font-size: 0.8rem;
+}

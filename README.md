@@ -258,6 +258,9 @@ bun run check          # Biome and TypeScript
 bun run size           # build, then check the size budget
 ```
 
+The demo site and docs in `demo/` are built with [Hugo](https://gohugo.io) and the [Vitrine](https://vitrine.maxfettinger.com/)
+theme, a Hugo module, so `bun run build:demo` and `bun run dev:demo` also need Hugo and Go.
+
 ## Credits
 
 Inspired by [PhotoSwipe](https://photoswipe.com) by Dmytro Semenov. No PhotoSwipe code is used.

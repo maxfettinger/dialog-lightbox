@@ -13,7 +13,12 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.3
-      # The demo site is built with Hugo; the browser tests open it too.
+      # The demo site is built with Hugo and the Vitrine theme, a Hugo module (Hugo needs Go to fetch it); the
+      # browser tests open it too.
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
       - uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: "0.167.0"
