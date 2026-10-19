@@ -1,0 +1,12 @@
+/* A row of thumbnails, 7rem high */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.row img {
+  display: block;
+  width: auto;
+  height: 7rem;
+}
