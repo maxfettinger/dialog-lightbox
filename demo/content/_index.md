@@ -1,7 +1,7 @@
 ---
 title: dialog-lightbox
 lead: A lightbox on the native `<dialog>`. Swipe, zoom and video for the photos you link to. It adds the behaviour; your markup and CSS decide how it looks.
-facts: ["9.5 kB gzip", "0 dependencies", "TypeScript", "MIT", "Baseline 2024"]
+facts: ["9.6 kB gzip", "0 dependencies", "TypeScript", "MIT", "Baseline 2024"]
 install: npm install dialog-lightbox
 actions:
   - { label: Get started, url: docs/getting-started/ }
